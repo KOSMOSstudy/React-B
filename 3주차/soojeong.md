@@ -14,14 +14,14 @@
 
 ### 6.1 자바스크립트 배열의 map() 함수
 
-**map 함수 문법**  
+<**map 함수 문법**>  
 **arr.map(callback, [thisArg])**
 
 -   callback : 새로운 배열의 요소를 생성하는 함수. 3가지의 파라미터를 가진다.
 
-    1. currentValue : 현재 처리하고 있는 요소
-    2. index : 현재 처리하고 있는 요소의 index 값
-    3. array : 현재 처리하고 있는 원본 배열
+    -   currentValue : 현재 처리하고 있는 요소
+    -   index : 현재 처리하고 있는 요소의 index 값
+    -   array : 현재 처리하고 있는 원본 배열
 
 -   thisArg(선택항목) : callback 함수 내부에서 사용할 this 레퍼런스
 
@@ -55,7 +55,7 @@ console.log(processed);
 
 ### 6.2 데이터 배열을 컴포넌트 배열로 변환하기
 
-문자열로 이루어진 데이터배열로 "<li></li>"을 연속으로 사용해야 하는 예제를 만들어 볼 것이다.
+문자열로 이루어진 데이터배열로, li를 연속으로 사용해야 하는 경우의 예제를 만들어 볼 것이다.
 
 ```jsx
 import React from "react";
@@ -70,18 +70,21 @@ export default IteractionSample;
 ```
 
 위 예제를 만들어보면, names에 선언한 문자열데이터들이 순서대로 잘 나오는 것을 볼 수 있다.  
-그러나 웹페이지상으로는 문제 없이 보이지만, 개발자도구에 들어가면 Warning 문구가 떠있다.  
+그러나 웹페이지상으로는 문제 없이 보이지만, 개발자도구에 들어가면 <font color='red'>Warning 문구</font>가 떠있다.  
 key prop이 존재하지 않는다는 경고문이고, 왜 key가 있어야 하는지 다음 절에서 알아볼 것이다.
 
 <br />
 
 ### 6.3 key
 
-**리액트에서의 key** : 컴포넌트 배열을 렌더링했을 때 어떤 원소에 변동이 있었는지 알아내려고 사용한다.  
+**리액트에서의 key** : 컴포넌트 배열을 렌더링했을 때 어떤 원소에 변동이 있었는지 알아내려고 사용한다.
+
+<br />
+
 key가 없어도 _Virtual DOM_ 을 이용해 변화를 감지할 수 있으나,  
 **key를 지정하는 것**이 변화를 알아내는 데에 더 빠른 도움이 된다.
 
-key를 설정하는 데 유의해야할 점은 <mark style='background-color: #fff5b1'>**key값이 언제나 유일해야 한다는 점**</mark>이다.  
+key를 설정하는 데 유의해야할 점은 <mark>key값이 언제나 유일해야 한다는 점</mark>이다.  
 그래서 데이터가 가진 고유한 값을 key값으로 설정한다.
 
 이전에 만든 분식예제에 key값을 추가하게 되면,
@@ -149,13 +152,13 @@ const IteractionSample = () => {
 export default IteractionSample;
 ```
 
-<img src="./Img/soojeong_concat.mp4">
+<img src="./Img/soojeong_concat.gif">
 
 **-push와 concat의 차이점-**  
 push : 기존 배열 자체를 변경  
 concat : 기존 배열을 두고, 새로운 배열을 만듬
 
-<mark style='background-color: #fff5b1'>리액트에서 상태를 업데이트 할 땐, 기존 상태를 그대로 두고 새로운 값을 상태로 설정해야 한다.</mark>
+<mark>리액트에서 상태를 업데이트 할 땐, 기존 상태를 그대로 두고 새로운 값을 상태로 설정해야 한다.</mark>
 
 이를 **불변성 유지**라고 하며, 불변성 유지가 필요한 이유는 ?  
 -> 후에 리액트 컴포넌트의 성능을 최적화 할 수 있다 !
@@ -184,7 +187,7 @@ const namesList = names.map((name) => (
 
 ### 6.5 정리
 
-<기억할 점>
+<**기억할 점**>
 
 1. **key값 설정 주의하기**
 2. **배열 변경 시, 새로운 배열 만들고 새로운 상태로 설정하기**
