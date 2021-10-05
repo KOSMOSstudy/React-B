@@ -312,7 +312,7 @@ export default IterationSample;
 
 - 마운트 : DOM이 생성되고 웹 브라우저 상에 나타나는 것을 마운트라고 한다.
     
-    ![Untitled](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%201.png)
+    ![Untitled1](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%201.png)
     
     - constructor: 컴포넌트를 새로 만들 때마다 호출되는 클래스 생성자 메서드
     - getDerivedStateFromProps: props에 있는 값을 state에 넣을 때 사용하는 메서드
@@ -325,11 +325,11 @@ export default IterationSample;
 3. 부모 컴포넌트가 리렌더링 될 때
 4. this.forceUpdate로 강제로 렌더링을 trigger 할 때
 
-![Untitled](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%202.png)
+![Untitled2](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%202.png)
 
 - 언마운트 : 마운트의 반대 과정으로, 컴포넌트를 DOM에서 제거하는 것을 말함
     
-    ![Untitled](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%203.png)
+    ![Untitled3](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%203.png)
     
     - componenetWillUnmount : 컴포넌트가 웹 브라우저상에서 사라지기 전에 호출
     
@@ -437,7 +437,7 @@ componenetDidCatch(error, info) {
 
 ## 7.3 라이프사이클 메서드 사용하기
 
-![Untitled](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%204.png)
+![Untitled4](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%204.png)
 
 ### 7.3.1 예제 컴포넌트 생성
 
@@ -616,7 +616,7 @@ import ErrorBoundary from './ErrorBoundary';    // 추가
 
 ## 7.4 정리
 
-![Untitled](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%205.png)
+![Untitled5](3%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1(6,%207,%208%E1%84%8C%E1%85%A1%E1%86%BC)%2056efcf44cec2492b8a81e737365d5590/Untitled%205.png)
 
 # <8장 : Hooks>
 
