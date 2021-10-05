@@ -84,7 +84,7 @@ key prop이 존재하지 않는다는 경고문이고, 왜 key가 있어야 하�
 key가 없어도 _Virtual DOM_ 을 이용해 변화를 감지할 수 있으나,  
 **key를 지정하는 것**이 변화를 알아내는 데에 더 빠른 도움이 된다.
 
-key를 설정하는 데 유의해야할 점은 `key값이 언제나 유일해야 한다는 점`이다.  
+key를 설정하는 데 유의해야할 점은 **`key값이 언제나 유일해야 한다는 점`**이다.  
 그래서 데이터가 가진 고유한 값을 key값으로 설정한다.
 
 이전에 만든 분식예제에 key값을 추가하게 되면,
@@ -163,7 +163,8 @@ concat : 기존 배열을 두고, 새로운 배열을 만듬
 이를 **불변성 유지**라고 하며, 불변성 유지가 필요한 이유는 ?  
 -> 후에 리액트 컴포넌트의 성능을 최적화 할 수 있다 !
 
-추가를 했다면, 추가한 요소를 삭제하는 법도 필요하다.  
+추가를 했다면, 추가한 요소를 삭제하는 법도 필요하다.
+
 DoubleCilck 이벤트를 이용하여 문자열을 삭제해보려고 한다.  
 이때 사용할 함수는 filter 함수인데, 특정 조건에 해당하는 원소만 남길 수 있다.  
 더블클릭 시, onRemove가 활성화되어 선택한 id와 같지 않은 원소들만 남겨 nextNames에 넣으라는 의미이다.
@@ -225,7 +226,7 @@ constructor -> getDerivedStateFromProps -> render -> componentDidMount
 3. 부모 컴포넌트가 리렌더링 될 때
 4. this.forceUpdate로 강제로 렌더링을 트리거 할 때
 
-`업데이트할 때 호출하는 메서드`
+`업데이트할 때 호출하는 메서드`  
 getDerivedStateFromProps -> shouldComponentUpdate -> render -> getSnapshotBeforeUpdate -> componentDidUpdate
 
 -   getDerivedStateFromProps : 마운트에서도 호출되고, 업데이트 시작 전에도 호출된다.
@@ -233,8 +234,8 @@ getDerivedStateFromProps -> shouldComponentUpdate -> render -> getSnapshotBefore
 -   getSnapshotBeforeUpdate : 컴포넌트 변화를 DOM에 반영하기 바로 직전에 호출
 -   componentDidUpdate : 컴포넌트 업데이트 작업이 끝난 후 호출
 
-**언마운트란 ?** 마운트의 반대 과정으로, 컴포넌트를 DOM에서 제거하는 것.
-`언마운트 할 때 호출하는 메서드`
+**언마운트란 ?** 마운트의 반대 과정으로, 컴포넌트를 DOM에서 제거하는 것.  
+`언마운트 할 때 호출하는 메서드`  
 componentWillUnmount
 
 -   componentWillUnmount : 컴포넌트가 웹 브라우저 상에서 사라지기 전에 호출
@@ -245,42 +246,43 @@ componentWillUnmount
 
 라이프사이클 메서드를 하나씩 살펴보려고 한다.
 
-`render 함수`  
+**`render 함수`**  
 render 메서드 안에서 this.props, this.state에 접근할 수 있고, 리액트 요소를 반환한다.  
 📌 **주의사항**  
 render 메서드 안에서는 이벤트 설정이 아닌 곳에서 setState를 사용하면 안 된다.  
-그리고 브라우저 DOM에 접근해서도 안 된다 -> DOM 정보를 가져오거나 state 변화를 줄 때는 componentDidMount에서 처리해야 한다.
+그리고 브라우저 DOM에 접근해서도 안 된다.  
+ -> DOM 정보를 가져오거나 state 변화를 줄 때는 componentDidMount에서 처리해야 한다.
 
-`constructor 메서드`  
+**`constructor 메서드`**  
 컴포넌트 생성자 메서드로, 컴포넌트를 만들 때 처음으로 실행된다. 이 메서드 내에서 초기 state를 정할 수 있다.
 
-`getDerivedStateFromProps 메서드`  
+**`getDerivedStateFromProps 메서드`**  
 v16.3 이후 새로 만든 라이프사이클 메서드.  
 props로 받아 온 값을 state에 동기화시키는 용도로 사용하며, 컴포넌트가 마운트 될 때와 업데이트 될 때 호출한다.
 
-`componentDidMount 메서드`  
+**`componentDidMount 메서드`**  
 컴포넌트를 만들고 첫 렌더링을 마친 후에 실행한다.  
 이 메서드 내에서 다른 자바스크립트 라이브러리, 프레임워크 함수 호출, 이벤트 등록, setTimeout, setInterval와 같은 비동기 작업을 처리한다.
 
-`shouldComponentUpdate 메서드`  
+**`shouldComponentUpdate 메서드`**  
 props 혹은 state를 변경했을 때, 리렌더링을 시작할지 여부를 지정한다.  
 이 메서드는 무조건 boolean값을 반환하며, 따로 이 메서드를 생성하지 않을 시 _true_ 값을 반환한다.  
 props, state는 this.props와 this.state로 접근하며 새로 설정될 props, state는 nextProps와 nextState로 접근할 수 있다.
 
-`getSnapshotBeforeUpdate 메서드`  
+**`getSnapshotBeforeUpdate 메서드`**  
 v16.3 이후 만든 메서드.  
 이 메서드는 render에서 만들어진 결과물이 브라우저로 반영되기 직전에 호출된다.  
 주로 업데이트하기 직전의 값을 참고할 일이 있을 때 활용된다. (ex: 스크롤바 위치 유지)
 
-`componentDidUpdate 메서드`  
+**`componentDidUpdate 메서드`**  
 리렌더링을 완료한 후 실행한다.  
 업데이트가 끝난 직후이기 때문에 DOM에 접근해도 상관없다.  
 prev를 이용하여 컴포넌트가 이전에 가졌던 데이터에 접근할 수 있다.
 
-`componentWillUnmount 메서드`  
+**`componentWillUnmount 메서드`**  
 컴포넌트를 DOM에서 제거할 때 실행한다.
 
-`componentDidCatch 메서드`  
+**`componentDidCatch 메서드`**  
 v16에서 새롭게 들어왔다.  
 컴포넌트 렌더링 도중 에러발생 시 오류 UI를 보여줄 수 있도록 해준다.
 
@@ -409,21 +411,25 @@ export default App;
 
 ![result3](./Img/soojeong_LifeCycle.png)
 
-위 코드와 콘솔창을 먼저 살펴보면,  
+위 코드와 콘솔창을 먼저 살펴보면,
+
 컴포넌트를 만들 때 처음으로 실행되는 **constructor**  
 props 값을 state로 동기화 시키는 **getDerivedStateFromProps**  
 리액트 요소를 반환하는 **render()**  
-컴포넌트를 만들고, 첫 렌더링을 마친 후 실행되는 **componentDidMount**  
+컴포넌트를 만들고, 첫 렌더링을 마친 후 실행되는 **componentDidMount**
+
 순서대로 실행된 것을 볼 수 있다.
 
 ![result4](./Img/soojeong_method1.png)
 
 <랜덤 색상 버튼>을 누르게 되면,
+
 props와 state의 변화가 생겨 **getDerivedStateFromProps**가 실행되고,  
 변경된 props와 state로 리렌더링 여부를 결정하는 **shouldComponentUpdate**  
 다시 한 번 리액트 요소를 반환하는 **render()**  
 브라우저에 반영 전 호출되는 **getSnapshotBeforeUpdate**  
-리렌더링이 완료된 후 실행되는 **componentDidUpdate**  
+리렌더링이 완료된 후 실행되는 **componentDidUpdate**
+
 순서대로 실행이 되며, <더하기 버튼>을 누를 시에도 실행되는 메서드의 순서는 같다.
 
 => 더하기를 하다 4로 끝나는 숫자가 나올 시, shouldeComponentUpdate에서 설정해놓은 조건에 의해 render부터는 실행되지 않는다.
@@ -441,40 +447,203 @@ props와 state의 변화가 생겨 **getDerivedStateFromProps**가 실행되고,
 
 ### 8.1 useState
 
-내용 placeholder
+💡 `함수형 컴포넌트`에서 상태를 관리하려면 Hooks를 이용한다.
+
+Hook의 가장 기본적인 함수는 **`useState`**이다.  
+useState 함수의 파라미터에는 상태의 기본값을 넣어주며, 함수가 호출되면 배열을 반환하게 되는데 이때 배열의 첫 번째 원소는 상태 값, 두 번째 원소는 상태를 설정하는 함수다.
+
+useState는 한 번에 하나의 상태 값만 관리할 수 있다.  
+이런 useState를 이용해서 여러 개의 상태 값을 어떻게 관리할 수 있을까?
+
+=> useState를 여러 번 사용하면 된다.
+
+<br />
 
 ### 8.2 useEffect
 
-내용 placeholder
+**`useEffect`** : 컴포넌트가 렌더링 될 때마다 특정 작업을 수행하도록 설정할 수 있는 Hooks다.  
+클래스형 컴포넌트의 componentDidMount + componentDidUpdate를 합친 형태라고 봐도 된다.
+
+useEffect에서 설정한 함수를 컴포넌트가 화면에 맨 처음 렌더링 될 때만 실행하고 싶다면?
+
+=> 함수의 두 번째 파라미터로 비어 있는 배열을 넣어주면 된다.
+
+```javascript
+useEffect(() => {}, []);
+```
+
+다른 경우, 특정 값이 변경될 때 호출하고 싶다면 ?
+
+=> 함수의 두 번째 파라미터로 넣었던 비어 있는 배열 안에 검사하고 싶은 값을 넣어주면 된다.  
+값을 넣을 때, useState로 관리하는 값을 넣어도 되고 props로 전달받은 값을 넣어도 된다.
+
+```javascript
+useEffect(() => {}, [name]);
+```
+
+<br />
 
 ### 8.3 useReducer
 
-내용 placeholder
+**`useReducer`** : 더 다양한 컴포넌트 상황에 따라 다양한 상태를 다른 값으로 업데이트 해줄 때 사용하는 Hooks다.
+
+Reducer은 현재 상태, 업데이트를 위해 필요한 정보를 담은 action 값을 전달받아서 새로운 상태로 반환하는 함수다.  
+📌Reducer 함수에서 새로운 상태를 만들 때는 **반드시 불변성을 지켜야 한다.**
+
+```javascript
+import React, { useReducer, useState } from "react";
+
+function reducer(state, action) {
+    switch (action.type) {
+        case "INCREMENT":
+            return { value: state.value + 1 };
+        case "DECREMENT":
+            return { value: state.value - 1 };
+        default:
+            return state;
+    }
+}
+
+//useReducer의 첫 번째 파라미터-만든 리듀서 함수, 두 번째 파라미터-리듀서의 기본값
+//state: 현재 가리키고 있는 상태, dispatch: 액션을 발생시키는 함수
+const Counter = () => {
+    const [state, dispatch] = useReducer(reducer, { value: 0 });
+
+    return (
+        <div>
+            <p>
+                현재 카운터 값은 <b>{state.value}</b>입니다.
+            </p>
+            <button onClick={() => dispatch({ type: "INCREMENT" })}>+1</button>
+            <button onClick={() => dispatch({ type: "DECREMENT" })}>-1</button>
+        </div>
+    );
+};
+
+export default Counter;
+```
+
+useReducer의 장점은 컴포넌트 업데이트 로직을 컴포넌트 바깥으로 빼낼 수 있다는 점이다.
+
+기존에 Input이 여러 개일 땐, useState를 여러 번 사용했다.  
+useReducer을 사용하면 좀 더 간편하게 바꿔줄 수 있다.
+
+<br />
 
 ### 8.4 useMemo
 
-내용 placeholder
+**`useMemo`** : 함수형 컴포넌트 내부에서 발생하는 연산을 최적화 할 수 있다.
+
+```javascript
+import React, { useState } from "react";
+
+const getAverage = (numbers) => {
+    console.log("평균값 계산 중 ...");
+    if (numbers.length === 0) return 0;
+    const sum = numbers.reduce((a, b) => a + b);
+    return sum / numbers.length;
+};
+
+const Average = () => {
+    const [list, setList] = useState([]);
+    const [number, setNumber] = useState("");
+
+    const onChange = (e) => {
+        setNumber(e.target.value);
+    };
+    const onInsert = (e) => {
+        const nextList = list.concat(parseInt(number));
+        setList(nextList);
+        setNumber("");
+    };
+
+    return (
+        <div>
+            <input value={number} onChange={onChange} />
+            <button onClick={onInsert}>등록</button>
+            <ul>
+                {list.map((value, index) => (
+                    <li key={index}>{value}</li>
+                ))}
+            </ul>
+            <div>
+                <b>평균값:</b> {getAverage(list)}
+            </div>
+        </div>
+    );
+};
+
+export default Average;
+```
+
+위 코드도 잘 작동되지만, 문제는 Input 칸 내용을 수정할 때도 getAverage가 리렌더링된다는 점 이었다.  
+이 부분은 useMemo를 통해서 해결할 수 있다.
+
+```javascript
+const avg = useMemo(() => getAverage(list), [list]);
+```
+
+를 추가하여, 평균값 자리에 getAverage대신, avg를 써주면, 불필요하게 렌더링되는 것을 막을 수 있다 !
+
+<br />
 
 ### 8.5 useCallback
 
-내용 placeholder
+**`useCallback`** : useMemo와 비슷하다. 주로 렌더링 성능 최적화를 할 때 쓰이며 만들어놨던 함수를 재사용 할 수 있다.
+
+useMemo 예제 코드에 문제가 있는 것은 아니지만, 컴포넌트가 리렌더링 될 때마다 함수를 새로 만들어서 쓰게 된다.  
+컴포넌트의 렌더링이 많아지면 최적화 시키는 것이 좋다.
+
+```javascript
+//컴포넌트가 처음 렌더링 될 때만 함수 생성
+const onChange = useCallback((e) => {
+    setNumber(e.target.value);
+}, []);
+//number or list가 바뀌었을 때만 함수 생성
+const onInsert = useCallback(
+    (e) => {
+        const nextList = list.concat(parseInt(number));
+        setList(nextList);
+        setNumber("");
+    },
+    [number, list]
+);
+```
+
+useCallback 함수의 파라미터
+
+-   첫 번째 파라미터 : 생성하고 싶은 함수
+-   두 번째 파라미터 : 배열
+
+onChange처럼 비어있는 배열을 뒤에 넣으면, 컴포넌트가 렌더링 될 때 만들었던 함수를 재사용한다.  
+onInsert와 같은 경우는 인풋 내용이 바뀌거나 새로운 항목이 추가될 때 새로 만들어진 함수를 사용한다.  
+📌**함수 내부에서 상태 값에 의존할 때는 그 값을 반드시 두 번째 파라미터에 포함해야 한다!**
+
+<br />
 
 ### 8.6 useRef
 
-내용 placeholder
+`useRef` : 함수형 컴포넌트에서 ref를 쉽게 사용할 수 있도록 해준다.
+
+<br />
 
 ### 8.7 커스텀 Hooks 만들기
 
-내용 placeholder
+여러 컴포넌트에서 비슷한 기능을 사용해야 할 때, Hooks를 만들어서 다른 컴포넌트로 가져와 사용할 수 있다.
+
+예를 들어 여러 개의 인풋을 관리하는 Hooks를 useInputs.js라는 이름으로 만들었다고 할 때,  
+이 기능을 사용하고자 하는 컴포넌트 상단에 import로 넣어주면 기능을 사용할 수 있다.
+
+```javascript
+import useInputs from "./useInputs";
+```
+
+<br />
 
 ### 8.8 다른 Hooks
 
-내용 placeholder
-
 ### 8.9 정리
 
-내용 placeholder
+✔ 새로 작성하는 컴포넌트의 경우 **함수형과 Hooks 사용을 권장**하고 있다 !
 
 ---
-
-질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
