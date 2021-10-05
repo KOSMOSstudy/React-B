@@ -538,30 +538,221 @@ dispatch(action)과 같은 형태이다!!!! 함수 안에 **파라미터로 액�
 >장점
 컴포넌트 업데이트 로직을 컴포넌트 바깥으로 빼낼 수 있다.
 
+#### input 상태 관리하기
+
+기존에는 useState를 여러 개 사용해서 input을 관리했다.
+useReducer를 사용하면 기존에 클래스형 컴포넌트에서 input 태그에 name 값을 할당하고
+e.target.name을 참조해 setState를 해 준 것과 유사항 방식으로 작업을 처리할 수 있다.
+
+Info.js
+```javascript
+(...)
+function reducer(state, action){
+  return{
+    ...state,
+    [action.name]: action.value
+  };
+}
+const Info = () => {
+  const[state, dispatch] = useReducer(reducer, {
+    name: '',
+    nickname: ''
+  });
+  const {name, nickname} = state;
+  const onChange = e => {
+    dispatch(e.target); // e.target 값을 액션 값으로 사용
+  };
+  return(
+    <div>
+      <div>
+        <input name="name" value={name} onChange={onChange} />
+        <input nickname="nickname" value={nickname} onChange={onChange} />
+      </div>
+      (...)
+    </div>
+  );
+};
+```
+useReducer에서 액션은 어떤 값도 사용이 가능하다.
+그래서 위의 코드에서는 e.target값 자체를 액션 값으로 사용했다.
+
+>input 태그의 속성 value / name
+- value : 요소의 초기값으로 사용자가 변경이 가능하다.
+- name : 태그명, 폼(form)데이터 전송 시 서버로 전달되는 이름으로 식별자 역할을 한다.
+
 ### 8.4 useMemo
 
-내용 placeholder
+useMemo를 사용하면 함수형 컴포넌트 내부에서 발생하는 **연산을 최적화**할 수 있다.
+리스트에 숫자를 추가하면 추가된 숫자들의 평균을 보여주는 컴포넌트를 작성해보자!
+
+```javascript
+const getAverage = numbers => {
+  if(numbers.length === 0) return 0;
+  const sum = numbers.reduce((a, b) => a + b);
+  return sum / numbers.length;
+};
+
+const Average = () => {
+  const [list, setList] = useState([]);
+  const [number, setNumber] = useState('');
+
+  const onChange = e => {
+    setNumber(e.target.value);
+  };
+
+  const onInsert = e => {
+    const nextList = list.concat(parseInt(number));
+    setList(nextList);
+    setNumber('');
+  };
+  
+  const avg = useMemo(() => getAverage(list), [list]);
+
+  return(
+    <div>
+      <input value = {number} onChange={onChange} />
+      <button onClick={onInsert}>등록</button>
+      <ul>
+        {list.map((value, index) => (
+          <li key = {index}>{value}</li>
+        ))}
+      </ul>
+      <div>
+          <b>평균값:</b> {avg}
+      </div>
+    </div>
+  );
+}; 
+```
+useMemo Hook을 사용하면 특정 값이 바뀌었을 때만 연산을 실행하고
+원하는 값이 바뀌지 않았다면 이전에 연산했던 결과를 다시 사용해 작업을 최적화할 수 있다.
+`const avg = useMemo(() => getAverage(list), [list]);`을 보면 리스트가 바뀌었을 경우에만
+getAverage 연산을 수행하도록 설정했다.
+
+>reduce 함수
+리스트의 원소의 전체 합을 구해주는 함수이다
+`const sum = numbers.reduce((a, b) => a + b);`
+sum이라는 값은 numbers 리스트에 있는 원소의 전체 합을 reduce 함수를 사용해 구한 값이다.
 
 ### 8.5 useCallback
 
-내용 placeholder
+useCallback은 주로 렌더링 성능을 최적화해야 하는 상황에서 주로 사용한다.
+이 Hook을 사용하면 만들어 놨던 함수를 **재사용**할 수 있다! 
+앞에서 구현했던 onChange와 onInsert 함수는 컴포넌트가 리렌더링될 때마다 새로 만들어진 함수를 사용하게 된다.
+보통은 문제가 없지만 컴포넌트의 렌더링이 자주 발생하거나 렌더링해야 할 컴포넌트가 많아지면 최적화해 주는 것이 좋다.
+
+Average.js
+```javascript
+const onChange = useCallback(e => {
+    setNumber(e.target.value);
+  }, []); // 컴포넌트가 처음 렌더링될 때만 함수 생성
+
+  const onInsert = useCallback(e => {
+    const nextList = list.concat(parseInt(number));
+    setList(nextList);
+    setNumber('');
+  }, [number, list]); // number 혹은 list가 바뀌었을 때만 함수 생성
+```
+useCallback의 **첫 번째 파라미터에는 생성하고 싶은 함수**를 넣고, **두 번째 파라미터에는 배열**을 넣으면 된다.
+이 배열에는 어떤 값이 바뀌었을 때 함수를 새로 생성해야 하는지 명시해야 한다.
+onChange처럼 빈 배열을 넣으면 컴포넌트가 렌더링될 때 만들었던 함수를 계속 재사용한다.
+onInsert처럼 배열 안에 number와 list를 넣으면 input내용이 바뀌거나 새로운 항목이 추가될 때 새로 만들어진 함수를 사용한다.
+**함수 내부에서 상태 값에 의존해야 할 때는 그 값을 반드시 배열 안에 포함**시켜야 한다!!!
+onInsert의 경우 기존의 number와 list를 조회해서 nextList를 생성하기 때문에 배열 안에 꼭 넣어주어야 한다!!
 
 ### 8.6 useRef
 
-내용 placeholder
+useRef Hook은 함수형 컴포넌트에서 **ref를 쉽게 사용**할 수 있도록 해준다.
+Average컴포넌트에서 '등록' 버튼을 눌렀을 때 포커스가 input 쪽으로 넘어가도록 코드를 작성해보자
+
+```javascript
+const Average = () => {
+  (...)
+  const inputEl = useRef(null);
+
+  const onChange = useCallback(e => {
+    setNumber(e.target.value);
+  }, []); // 컴포넌트가 처음 렌더링될 때만 함수 생성
+
+  const onInsert = useCallback(e => {
+    (...)
+    inputEl.current.focus();
+  }, [number, list]); // number 혹은 list가 바뀌었을 때만 함수 생성
+  
+  return(
+    (...)
+      <input value = {number} onChange={onChange} ref={inputEl}/>
+    (...)
+```
+useRef를 사용해 ref를 설정하면 useRef를 통해 만든 객체 안의 current 값이 실제 엘리먼트를 가리킨다.
+
+#### 로컬 변수 사용하기 
+
+컴포넌트 로컬 변수를 사용해야 할 때도 useRef를 활용할 수 있다.
+여기서 로컬 변수란 렌더링과 상관없이 바뀔 수 있는 값을 의미한다.
+
+```javascript
+const Local = () => {
+  const id= useRef(1);
+  const setId = (n) => {
+    id.current = n;
+  }
+  const printId = () => {
+    console.log(id.current);
+  }
+  return(
+    <div>
+      refsample
+    </div>
+  );
+};
+```
+*!주의: 이렇게 ref안의 값이 바뀌어도 컴포넌트가 렌더링되지 않는다!*
+렌더링과 관련되지 않은 값을 관리할 때만 이런 방식으로 코드를 작성해야 한다.
 
 ### 8.7 커스텀 Hooks 만들기
 
-내용 placeholder
+여러 컴포넌트에서 비슷한 기능을 공유할 경우, Hook을 만들어 재사용할 수 있다.
+
+useInputs.js
+```javascript
+import { useReducer } from 'react';
+
+function reducer(state, action){
+  return{
+    ...state,
+    [action.name] : action.value
+  };
+}
+
+export default function useInputs(initialForm){
+  const [state, dispatch] = useReducer(reducer, initialForm);
+  const onChange = e => {
+    dispatch(e.target);
+  };
+  return [state, onChange];
+}
+```
+Info.js
+```javascript
+import useInputs from './useInputs';
+
+const Info = () => {
+  const [state, onChange] = useInputs({
+    name: '',
+    nickname: ''
+});
+(...)
+```
 
 ### 8.8 다른 Hooks
 
-내용 placeholder
+!더 많은 Hook은 아래 링크를 참고!
+<https://nikgraf.github.io/react-hooks/>
+<http://github.com/rehooks/awesome-react-hooks>
 
 ### 8.9 정리
 
-내용 placeholder
-
-------
-
-질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
+리액트에서 Hooks 패턴을 사용하면 클래스형 컴포넌트를 사용하지 않고도 대부분의 기능을 구현할 수 있다.
+리액트 매뉴얼에 따르면 기존의 클래스형 컴포넌트는 계속 지원되지만 함수형 컴포넌트와 Hooks 사용을 권장한다.
+앞으로는 클래스형 컴포넌트는 꼭 필요한 상황에서 구현하고 함수형 컴포넌트를 사용하자!:)
