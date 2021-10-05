@@ -56,7 +56,8 @@ export default IterationSample;
 이 컴포넌트를 App.js와 랜더링 하게되면 정상적으로 동작하는것처럼 보이겠지만 
 
 개발자 도구로 보았을 때 에러가 났음을 확인할 수 있다.
- <kbd><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/02089aac-4496-4862-a9c6-9900ccc456ab/Untitled.png"></kbd>
+
+ <kbd><img src="(https://user-images.githubusercontent.com/67777124/136027999-07c4ab0d-8538-4906-869a-7cd7f28b0f8f.png"></kbd>
 
 경고 메시지를 보면 리스트에 있는 각 자손 요소(child)가 "key" prop이 없다고 나온다.
 
@@ -379,7 +380,7 @@ class Counter extends Component {
 export default Counter;
 ```
 
-<kbd><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/702a92fb-a7df-43b6-b65a-fb0c92a25aef/Untitled.png"></kbd>
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136028078-04f05fbe-358d-4fb8-9718-a847748be959.png"></kbd>
 
 
 5의 배수일때 리랜더링 하지 않게 shouldComponentUpdate로그가 찍히는 것과 
