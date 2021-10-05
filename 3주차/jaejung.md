@@ -6,7 +6,7 @@
 | 7장 | 컴포넌트와 라이프사이클 메서드 |
 | 8장 | Hooks |
 
-<kbd><img src="https://user-images.githubusercontent.com/67777124/136016503-d054820b-37b8-462b-a338-ed208190be9c.png" height="200"></kbd>
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136016503-d054820b-37b8-462b-a338-ed208190be9c.png" height="500"></kbd>
 
 
 ## 6장
