@@ -1,14 +1,20 @@
 import styled from "styled-components";
 
+import AddList from "./AddList";
+import InputList from "./InputList";
+
 const WriteListBox = styled.section`
   height: 65px;
   width: 657px;
-  background-color: red;
+  display: flex;
 `;
 
 const WriteList = () => {
     return (
-        <WriteListBox />
+        <WriteListBox>
+            <InputList />
+            <AddList />
+        </WriteListBox>
     );
 }
 
