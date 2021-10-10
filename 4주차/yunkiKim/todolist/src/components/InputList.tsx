@@ -1,4 +1,8 @@
+import React, {FunctionComponent} from "react";
+import {useObserver} from 'mobx-react';
 import styled from "styled-components";
+
+import indexStore, {IndexStore} from "../store/indexStore";
 
 const ListInput = styled.input`
   height: 65px;
@@ -11,10 +15,19 @@ const ListInput = styled.input`
   border: 0;
 `;
 
-const InputList = () => {
-    return (
-        <ListInput />
-    );
+const InputList: FunctionComponent = () => {
+    const {TodoList} = indexStore() as IndexStore;
+
+    const handleChange = ({target: {value}}: {target: {value: string}}): void => {
+        TodoList.setCurrData(value);
+    }
+
+    return useObserver(() => (
+        <ListInput
+            type='text'
+            onChange={handleChange}
+        />
+    ));
 }
 
 export default InputList;
