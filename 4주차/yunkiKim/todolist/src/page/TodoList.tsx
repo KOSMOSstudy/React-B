@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 
+import Header from "../components/Header";
+
 const TodoListBox = styled.section`
   height: 483px;
   width: 657px;
-  background-color: red;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -13,7 +14,9 @@ const TodoListBox = styled.section`
 
 const TodoList = () => {
     return (
-        <TodoListBox />
+        <TodoListBox>
+            <Header />
+        </TodoListBox>
     )
 }
 
