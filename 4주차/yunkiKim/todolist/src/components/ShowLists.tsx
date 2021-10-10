@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {FunctionComponent} from "react";
 
 const ShowListBox = styled.section`
   height: 334px;
@@ -6,7 +7,7 @@ const ShowListBox = styled.section`
   background-color: white;
 `;
 
-const ShowLists = () => {
+const ShowLists: FunctionComponent = () => {
     return (
         <ShowListBox />
     );

@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 import AddList from "./AddList";
 import InputList from "./InputList";
+import {FunctionComponent} from "react";
 
 const WriteListBox = styled.section`
   height: 65px;
@@ -9,7 +10,7 @@ const WriteListBox = styled.section`
   display: flex;
 `;
 
-const WriteList = () => {
+const WriteList: FunctionComponent = () => {
     return (
         <WriteListBox>
             <InputList />

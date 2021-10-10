@@ -1,4 +1,5 @@
 import {useObserver} from 'mobx-react';
+import {FunctionComponent, useCallback} from "react";
 import styled from "styled-components";
 
 import indexStore, {IndexStore} from "../store/indexStore";
@@ -16,12 +17,12 @@ const AddListBox = styled.button`
 
 const AddListIcon = styled.img``;
 
-const AddList = () => {
+const AddList: FunctionComponent = () => {
     const {TodoList} = indexStore() as IndexStore;
 
-    const handleClick = () => {
+    const handleClick = useCallback(() => {
         TodoList.setList();
-    }
+    }, []);
 
     return useObserver(() => (
         <AddListBox onClick={handleClick}>

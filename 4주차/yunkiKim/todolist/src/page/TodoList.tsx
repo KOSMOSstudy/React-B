@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import Header from "../components/Header";
 import WriteList from "../components/WriteList";
 import ShowLists from "../components/ShowLists";
+import {FunctionComponent} from "react";
 
 const TodoListBox = styled.section`
   height: 483px;
@@ -14,7 +15,7 @@ const TodoListBox = styled.section`
 `;
 
 
-const TodoList = () => {
+const TodoList: FunctionComponent = () => {
     return (
         <TodoListBox>
             <Header />

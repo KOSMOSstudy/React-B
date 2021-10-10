@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {FunctionComponent} from "react";
 
 const HeaderBox = styled.header`
   height: 93px;
@@ -15,7 +16,7 @@ const HeaderTitle = styled.h3`
   font-weight: normal;
 `;
 
-const Header = () => {
+const Header: FunctionComponent = () => {
     return (
         <HeaderBox>
             <HeaderTitle>일정 관리</HeaderTitle>

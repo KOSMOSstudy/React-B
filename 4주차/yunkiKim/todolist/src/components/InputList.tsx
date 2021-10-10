@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from "react";
+import React, {FunctionComponent, useCallback} from "react";
 import {useObserver} from 'mobx-react';
 import styled from "styled-components";
 
@@ -18,9 +18,9 @@ const ListInput = styled.input`
 const InputList: FunctionComponent = () => {
     const {TodoList} = indexStore() as IndexStore;
 
-    const handleChange = ({target: {value}}: {target: {value: string}}): void => {
+    const handleChange = useCallback(({target: {value}}: {target: {value: string}}): void => {
         TodoList.setCurrData(value);
-    }
+    }, []);
 
     return useObserver(() => (
         <ListInput
