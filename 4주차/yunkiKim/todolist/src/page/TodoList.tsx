@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import Header from "../components/Header";
+import WriteList from "../components/WriteList";
 
 const TodoListBox = styled.section`
   height: 483px;
@@ -16,6 +17,7 @@ const TodoList = () => {
     return (
         <TodoListBox>
             <Header />
+            <WriteList />
         </TodoListBox>
     )
 }
