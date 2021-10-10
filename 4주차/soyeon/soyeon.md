@@ -31,10 +31,35 @@ Ex) card_title-primary
 CSS Selector를 사용하면 CSS 클래스가 특정 클래스 내부에 있는 경우에만 스타일을 적용할 수 있다.
 예를 들어 .App 안에 들어 있는 .logo에 스타일을 적용하고 싶다면 `.App .logo`처럼 표현할 수 있다! 
 
+>클래스가 아닌 태그 자체에 스타일을 적용하는 경우라면 .을 생략해도 된다. <br/>
+`App header` : 헤더 클래스가 아닌 태그에 스타일 적용
+
 ### 9.2 Sass 사용하기
 
-내용 placeholder
+Sass는 CSS 전처리기로 복잡한 작업을 쉽게 할 수 있도록 해 주고, 스타일 코드의 재활용성을 높여 줄 뿐만 아니라 코드의 가독성을 높여
+유지보수를 더욱 쉽게 해준다.
 
+#### .scss
+
+```sass
+$font-stack: Helvetica, snas-serif
+$primary-color: #333
+
+body
+  font: 100% $font-stack
+  color: $primary-color
+```
+#### .sass
+
+```scss
+$font-stack: Helvetica, sans-serif;
+$primary-color: #333;
+
+body{
+  font: 100% $font-stack
+  color: $primary-color
+}
+```
 ### 9.3 CSS Module
 
 내용 placeholder
