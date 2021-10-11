@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useCallback} from "react";
-import {useObserver} from 'mobx-react';
+import {Observer} from 'mobx-react';
 import styled from "styled-components";
 
 import indexStore, {IndexStore} from "../store/indexStore";
@@ -20,14 +20,16 @@ const InputList: FunctionComponent = () => {
 
     const handleChange = useCallback(({target: {value}}: {target: {value: string}}): void => {
         TodoList.setCurrData(value);
-    }, []);
+    }, [TodoList]);
 
-    return useObserver(() => (
-        <ListInput
-            type='text'
-            onChange={handleChange}
-        />
-    ));
+    return (
+        <Observer>
+            {() => <ListInput
+                type='text'
+                onChange={handleChange}
+            />}
+        </Observer>
+    );
 }
 
 export default InputList;

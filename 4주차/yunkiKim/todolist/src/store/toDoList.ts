@@ -17,6 +17,7 @@ const TodoList = observable({
 
     setCurrData(currData: string): void {
         this.currData = currData;
+        console.log(this.currData);
     }
 
 });

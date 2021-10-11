@@ -1,4 +1,4 @@
-import {useObserver} from 'mobx-react';
+import {Observer} from 'mobx-react';
 import {FunctionComponent, useCallback} from "react";
 import styled from "styled-components";
 
@@ -22,13 +22,19 @@ const AddList: FunctionComponent = () => {
 
     const handleClick = useCallback(() => {
         TodoList.setList();
-    }, []);
+    }, [TodoList]);
 
-    return useObserver(() => (
-        <AddListBox onClick={handleClick}>
-            <AddListIcon src='/addList.svg' alt='add list button'/>
-        </AddListBox>
-    ));
+    return (
+        <Observer>
+            {
+                () => (
+                    <AddListBox onClick={handleClick}>
+                        <AddListIcon src='/addList.svg' alt='add list button'/>
+                    </AddListBox>
+                )
+            }
+        </Observer>
+    );
 }
 
 export default AddList;
