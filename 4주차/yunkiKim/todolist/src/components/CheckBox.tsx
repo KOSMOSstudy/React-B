@@ -39,10 +39,10 @@ const CustomCheckBox = styled.div<{checked: boolean}>`
   }
 `;
 
-const CheckBox: FunctionComponent<{checked: boolean, onClick: any}> = ({checked, ...props}) => {
+const CheckBox: FunctionComponent<{checked: boolean, onClick: any, todoId: number}> = ({checked, todoId, ...props}) => {
   return (
       <CheckBoxContainer>
-        <HiddenCheckBox {...props} />
+        <HiddenCheckBox name={todoId.toString()} {...props} />
         <CustomCheckBox checked={checked}>
           <Icon viewBox='0 0 24 24'>
               <polyline points='15 7 9 17 5 12'/>

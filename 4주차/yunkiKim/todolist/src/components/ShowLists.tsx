@@ -1,7 +1,9 @@
-import {useState} from "react";
-import styled from "styled-components";
 import {FunctionComponent} from "react";
+import styled, {css} from "styled-components";
+import {Observer} from 'mobx-react';
+
 import CheckBox from "./CheckBox";
+import indexStore, {IndexStore} from '../store/indexStore';
 
 const ShowListBox = styled.section`
   height: 334px;
@@ -17,18 +19,17 @@ const ListBox = styled.div`
   align-items: center;
 `;
 
-// const CheckBox = styled.input`
-//   height: 24px;
-//   width: 24px;
-//   position: relative;
-//   left: 28px;
-//   background-color: red;
-// `;
-
-const List = styled.p`
+const ListData = styled.p<{done: boolean}>`
+  width: 428px;
   font-size: 20px;
   position: relative;
   left: 77px;
+  overflow: hidden;
+  
+  ${({done}) => done && css`
+    color: #7c7b7b;
+    text-decoration: line-through;
+  `}
 `;
 
 const DeleteButton = styled.button`
@@ -36,7 +37,7 @@ const DeleteButton = styled.button`
   border: 0;
   background-color: white;
   position: relative;
-  left: 510px;
+  left: 150px;
 `;
 
 const DeleteIcon = styled.img`
@@ -45,25 +46,37 @@ const DeleteIcon = styled.img`
 `;
 
 const ShowLists: FunctionComponent = () => {
-    const [checked, setChecked] = useState(false);
+    const {TodoList} = indexStore() as IndexStore;
 
-    const handleClick = () => {
-        console.log(1);
-        setChecked(!checked);
+    const handleClick = ({target: {name}}: {target: {name: string}}) => {
+        console.log(name);
+        TodoList.setDone(Number(name));
     }
 
     return (
-        <ShowListBox>
-            <ListBox>
-                <label>
-                    <CheckBox checked={checked} onClick={handleClick} />
-                </label>
-                <List>todo1</List>
-                <DeleteButton>
-                    <DeleteIcon src='/deleteList.svg' alt='delete list button'/>
-                </DeleteButton>
-            </ListBox>
-        </ShowListBox>
+        <Observer>
+            {
+                () => (
+                    <ShowListBox>
+                        {TodoList.lists.map(({id, data, done}) => (
+                            <ListBox key={id}>
+                                <label>
+                                    <CheckBox
+                                        checked={done}
+                                        todoId={id}
+                                        onClick={handleClick}
+                                    />
+                                </label>
+                                <ListData done={done}>{data}</ListData>
+                                <DeleteButton>
+                                    <DeleteIcon src='/deleteList.svg' alt='delete list button'/>
+                                </DeleteButton>
+                            </ListBox>
+                        ))}
+                    </ShowListBox>
+                )
+            }
+        </Observer>
     );
 }
 
