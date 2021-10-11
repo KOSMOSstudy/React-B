@@ -11,4 +11,5 @@ export type TodoListType = {
     setList(): void;
     setCurrData(currData: string): void;
     setDone(todoId: number): void;
+    deleteList(todoId: number): void;
 }

@@ -1,4 +1,4 @@
-import {FunctionComponent} from "react";
+import React, {FunctionComponent} from "react";
 import styled, {css} from "styled-components";
 import {Observer} from 'mobx-react';
 
@@ -43,14 +43,23 @@ const DeleteButton = styled.button`
 const DeleteIcon = styled.img`
   height: 30px;
   width: 30px;
+  pointer-events: none;
 `;
 
 const ShowLists: FunctionComponent = () => {
     const {TodoList} = indexStore() as IndexStore;
 
-    const handleClick = ({target: {name}}: {target: {name: string}}) => {
-        console.log(name);
-        TodoList.setDone(Number(name));
+    const handleClick = (event: React.SyntheticEvent, id: number) => {
+        const name: string = (event.target as HTMLInputElement).name;
+        switch (name) {
+            case 'checkbox':
+                TodoList.setDone(id);
+                break;
+            case 'deleteButton':
+                event.preventDefault();
+                TodoList.deleteList(id);
+                break;
+        }
     }
 
     return (
@@ -64,12 +73,19 @@ const ShowLists: FunctionComponent = () => {
                                     <CheckBox
                                         checked={done}
                                         todoId={id}
-                                        onClick={handleClick}
+                                        onClick={(event: React.SyntheticEvent<Element, Event>) => handleClick(event, id)}
                                     />
                                 </label>
                                 <ListData done={done}>{data}</ListData>
-                                <DeleteButton>
-                                    <DeleteIcon src='/deleteList.svg' alt='delete list button'/>
+                                <DeleteButton
+                                    name='deleteButton'
+                                    onClick={(event) => handleClick(event, id)}
+                                >
+                                    <DeleteIcon
+                                        src='/deleteList.svg'
+                                        alt='delete list button'
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
                                 </DeleteButton>
                             </ListBox>
                         ))}
