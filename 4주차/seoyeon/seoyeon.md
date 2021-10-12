@@ -352,7 +352,7 @@ export default App;
     export default App;
     ```
     
-    ![Untitled](./Img/s0.png)
+    ![Untitled](../Img/s0.png)
     
     ### 9.2.1 utils 함수 분리하기
     
@@ -362,7 +362,7 @@ export default App;
     
     이후 기존 SassComponenet.scss에 작성했던 변수와 믹스인을 잘라내어 이동시켜보자!
     
-    ![Untitled](./Img/s1.png)
+    ![Untitled](../Img/s1.png)
     
     새로운 directory를 생성해주었다.
     
@@ -394,7 +394,7 @@ SassComponent.scss에서 utils.scss를 사용하려면 다음 한 줄만 사용�
 @import './styles/utils';
 ```
 
-![Untitled](./Img/s2.png)
+![Untitled](../Img/s2.png)
 
 결과는 똑같음을 알 수 있다.
 
@@ -423,37 +423,37 @@ $ git add .
 $ git commit -m "Commit before yarn eject'
 ```
 
-![Untitled](./Img/s3.png)
+![Untitled](../Img/s3.png)
 
 npm eject 시도했는데 실패..
 
 결국 일단 npm을 사용하여 yarn을 설치함
 
-![Untitled](./Img/s4.png)
+![Untitled](../Img/s4.png)
 
 구글링을 통해 알게 된.. 정보에 의하면
 
-![Untitled](./Img/s5.png)
+![Untitled](../Img/s5.png)
 
 그냥 npm eject 아니고, npm run eject하면 된다고 한다!
 
 실제로 시도해보니 성공.
 
-![Untitled](./Img/s6.png)
+![Untitled](../Img/s6.png)
 
 완료 시, config 라는 directory 생성 완료됨을 알 수 있다.
 
-![Untitled](./Img/s7.png)
+![Untitled](../Img/s7.png)
 
 과연 어떤 파일일까. 열어보자.
 
-![Untitled](./Img/s8.png)
+![Untitled](../Img/s8.png)
 
 으악!
 
 이 중에서 sassRegex라는 키워드를 찾아준다.
 
-![Untitled](./Img/s9.png)
+![Untitled](../Img/s9.png)
 
 그리고 해당 코드를 다음과 같이 수정해준다.
 
@@ -560,7 +560,7 @@ SassComponent.scss 파일 또한 다음과 같이 수정
 
 npm start
 
-![Untitled](./Img/s10.png)
+![Untitled](../Img/s10.png)
 
 Error 발생
 
@@ -872,7 +872,7 @@ export default App;
 
 <결과 그림> 
 
-![Untitled](./Img/s11.png)
+![Untitled](../Img/s11.png)
 
 ### 9.4.1 Tagged 템플릿 리터럴
 
@@ -1056,7 +1056,7 @@ const Box = styled.div`
 
 <결과 화면>
 
-![Untitled](./Img/s12.png)
+![Untitled](../Img/s12.png)
 
 일반 CSS에서 할 때랑 큰 차이가 없다.
 
@@ -1155,7 +1155,7 @@ const App = () => {
 export default App;
 ```
 
-![Untitled](./Img/s13.png)
+![Untitled](../Img/s13.png)
 
 npm start를 하면 위와 같이 표시된다
 
@@ -1244,7 +1244,7 @@ export default App;
 }
 ```
 
-![Untitled](./Img/s14.png)
+![Untitled](../Img/s14.png)
 
 ### 10.2.2 TodoInsert 만들기
 
@@ -1296,7 +1296,7 @@ export default App;
 
 결과 화면은 다음과 같다
 
-![Untitled](./Img/s15.png)
+![Untitled](../Img/s15.png)
 
 이를 스타일링 하면
 
@@ -1344,7 +1344,7 @@ export default App;
 
 스타일링이 완료되면 다음과 같은 화면을 볼 수 있다
 
-![Untitled](./Img/s16.png)
+![Untitled](../Img/s16.png)
 
 ### 10.2.3 TodoListltem과 TodoList 만들기
 
@@ -1418,7 +1418,7 @@ const App = () => {
 export default App;
 ```
 
-![Untitled](./Img/s17.png)
+![Untitled](../Img/s17.png)
 
 styling은 미완료 된 상태 (네모 박스 오타로 인해 □가 화면에 나오지 않음)
 
@@ -1486,7 +1486,7 @@ styling은 미완료 된 상태 (네모 박스 오타로 인해 □가 화면에
 
 여기까지 작성하고 화면을 확인해보면 다음과 같다. 
 
-![Untitled](./Img/s18.png)
+![Untitled](../Img/s18.png)
 
 스타일링이 완료된 화면이다.
 
@@ -1598,7 +1598,7 @@ export default TodoListItem;
 
 렌더링 시, 다음과 같은 화면을 볼 수 있다
 
-![Untitled](./Img/s19.png)
+![Untitled](../Img/s19.png)
 
 ### 10.3.2 항목 추가 기능 구현하기
 
@@ -1634,15 +1634,15 @@ export default TodoInsert;
 
 위와 같이 코드를 수정 후 Input에 text를 입력하면 오류가 발생하지 않고 텍스트 입력이 잘 됨을 확인할 수 있다. 
 
-![Untitled](./Img/s20.png)
+![Untitled](../Img/s20.png)
 
 ### 10.3.2.2 리액트 개발자 도구
 
-![Untitled](./Img/s21.png)
+![Untitled](../Img/s21.png)
 
 Chrome 웹스토어에서 React Developer Tools를 검색하여 설치하고
 
-![Untitled](./Img/s22.png)
+![Untitled](../Img/s22.png)
 
 components에서 TodoInsert를 검색 및 선택하면 Hooks의 State 부분에도 Input을 수정했을 때 같은 값이 잘 들어감을 확인할 수 있다. 
 
@@ -1759,7 +1759,7 @@ const TodoInsert = ({ onInsert }) => {
 export default TodoInsert;
 ```
 
-![Untitled](./Img/s23.png)
+![Untitled](../Img/s23.png)
 
 onSubmit 대신에 버튼에 onClick 이벤트로도 처리가 가능하다!
 
@@ -1885,7 +1885,7 @@ export default TodoListItem;
 
 여기까지 완료 한 후, 실행시키면 항목이 삭제됨을 볼 수 있음
 
-![Untitled](./Img/s24.png)
+![Untitled](../Img/s24.png)
 
 ### 10.3.4 수정 기능
 
@@ -1973,7 +1973,7 @@ export default TodoListItem;
 
 여기까지 완료하면 체크박스의 상태를 수정할 수 있게 된다.
 
-![Untitled](./Img/s25.png)
+![Untitled](../Img/s25.png)
 
 ## 10.4 정리
 
@@ -2003,7 +2003,7 @@ export default TodoListItem;
 
 (직접 해보기)
 
-![Untitled](./Img/s26.png)
+![Untitled](../Img/s26.png)
 
 ## 11.3 느려지는 원인 분석
 
@@ -2132,7 +2132,7 @@ setTodos를 사용할 때 앞에 todos⇒ 만 넣어주면 된다.
 
 ↓ 성능 checking
 
-![Untitled](./Img/s27.png)
+![Untitled](../Img/s27.png)
 
 기존 1.7초 ⇒ 현재 0.39초
 
@@ -2448,13 +2448,13 @@ TodoListItem의 스타일 파일에서 최하단에 있던 & + &를 사용하여
 
 이제 렌더링하면
 
-![Untitled](./Img/s28.png)
+![Untitled](../Img/s28.png)
 
 다음과 같이 나타나고,
 
 성능을 측정하면
 
-![Untitled](./Img/s29.png)
+![Untitled](../Img/s29.png)
 
 ms초 단위로 줄며 훨씬 성능이 향상되었음을 알 수 있다.
 
