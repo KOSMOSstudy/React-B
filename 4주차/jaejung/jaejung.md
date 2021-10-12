@@ -24,7 +24,7 @@ CSS를 작성할 때 가장 중요한 점은 CSS 클래스를 중복되지 않�
 
 **중복되는 것을 방지하는 방법:**
 
-1⇒ 이름을 지을 때 특별한 규칙을 사용하여 짓기
+1. 이름을 지을 때 특별한 규칙을 사용하여 짓기
 
 2. CSS selector를 활용하기
 
@@ -138,7 +138,7 @@ const SassComponent = () => {
 export default SassComponent;
 ```
 
-![Untitled](4%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1%20React%20%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%84%83%E1%85%B5%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%20b8246a0e280c4ee9a54e278a57140ee1/Untitled.png)
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136947940-f1841488-b206-4f9b-ab7b-7b264c19a6fc.png"></kbd>
 
 ### **9.2.1** utils 함수 분리하기
 
@@ -254,7 +254,8 @@ ex) `{ wrapper: "CSSModule_wrapper__1SbdQ" }`
 
 이 고유한 클래스 이름을 사용하려면 클래스를 적용하고 싶은 JSX 엘리먼트에 className={styles.[클래스 이름]} 형태로 전달해 주면 된다.
 
-![Untitled](4%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1%20React%20%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%84%83%E1%85%B5%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%20b8246a0e280c4ee9a54e278a57140ee1/Untitled%201.png)
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136947500-8c3c16be-3073-47ab-b384-06ac8ba11bb4.png"></kbd>
+
 
 CSS Module을 사용한 클래스 이름을 두 개 이상 적용할 때는
 
@@ -341,8 +342,8 @@ const StyledComponent = () => {
 
 export default StyledComponent;
 ```
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136947551-f8925b18-f621-4246-93a0-c03803d11701.png"></kbd>
 
-![Untitled](4%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1%20React%20%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%84%83%E1%85%B5%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%20b8246a0e280c4ee9a54e278a57140ee1/Untitled%202.png)
 
 ### Tagged 템플릿 리터럴
 
@@ -402,7 +403,6 @@ const sizes = {
 };
 
 //위에 있는 size 객체에 따라 자동으로 media 쿼리 함수를 만들어 줍니다.
-//참고: https://www.styled-components.com/docs/advanced#media-templates
 const media = Object.keys(sizes).reduce((acc, label) => {
   acc[label] = (...args) => css`
     @medial (max-width: ${sizes[label] / 16}em) {
@@ -451,7 +451,8 @@ todo 객체를 props로 받아 와서 상태에 따라 다른 스타일의 UI를
 `TodoList`
 todos 배열을 props로 받아 온 후, map을 사용하여 여러 개의 TodoListItem으로 변환한다.
 
-![Untitled](4%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1%20React%20%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%84%83%E1%85%B5%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%20b8246a0e280c4ee9a54e278a57140ee1/Untitled%203.png)
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136947668-7c055a0d-5c3a-4d3a-afdb-6c914dab22bb.png"></kbd>
+
 
 [https://react-icons.github.io/react-icons/icons?name=md](https://react-icons.github.io/react-icons/icons?name=md) 
 
@@ -550,7 +551,9 @@ function todoReducer(todos, action) {
 
 개발자 도구의 Performance 탭에서 녹화 버튼을 누른 뒤 항목을 체크하고 Stop을 누른다.
 
-![Untitled](4%E1%84%8C%E1%85%AE%E1%84%8E%E1%85%A1%20React%20%E1%84%89%E1%85%B3%E1%84%90%E1%85%A5%E1%84%83%E1%85%B5%20%E1%84%8C%E1%85%A5%E1%86%BC%E1%84%85%E1%85%B5%20b8246a0e280c4ee9a54e278a57140ee1/Untitled%204.png)
+
+<kbd><img src="https://user-images.githubusercontent.com/67777124/136948145-2eb7e98d-2379-4a8d-8215-5e636d1918e4.png"></kbd>
+
 
  데이터가 2,500개밖에 안 되는데도 불구하고 1초나 걸린다는 것은 성능이 매우 나쁘다는 의미다.
 
@@ -572,7 +575,7 @@ function todoReducer(todos, action) {
 
 부모 컴포넌트가 리렌더링되었으니 TodoList 컴포넌트가 리렌더링되고 
 
-그 안의 모든 `TodoListItem` 컴포넌트들도 리렌더링됩니다.
+그 안의 모든 `TodoListItem` 컴포넌트들도 리렌더링된다.
 
 '할 일 1' 항목은 리렌더링되어야 shouldComponentUpdate하는 것이 맞지만, 
 '할 일2'부터 '할 일 2500'까지는 리렌더링을 안 해도 되는 상환인데 
