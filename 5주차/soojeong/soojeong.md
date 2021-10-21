@@ -18,7 +18,7 @@ ex. 블로그화면(홈 화면/포스트목록/포스트/글쓰기) 과 같이 S
  현재 사용자 브라우저의 주소 상태에 따라 다양한 화면을 보여줄 수 있다.
 
 < 전통적인 웹 페이지 로딩구조 >  
-![result1](./Img/soojeong1.png)
+![result1](../Img/soojeong1.png)
 
 기존 웹 페이지 구조를 보게 되면, 필요한 리소스를 서버측이 전달해 웹 브라우저가 해석하여 사용자에게 화면을 보여주었다.
 
@@ -32,7 +32,7 @@ ex. 블로그화면(홈 화면/포스트목록/포스트/글쓰기) 과 같이 S
 3. 바뀌지 않는 부분까지 새로 불러와 불필요한 로딩이 있어 비효율적이다.
 
 < SPA 구조 >  
-![result2](./Img/soojeong2.png)
+![result2](../Img/soojeong2.png)
 
 -> **그래서 리액트 같은 라이브러리를 사용하면 필요한 부분만 자바스크립트를 이용하여 업데이트 해준다. 새로운 데이터가 필요하다면 서버 API를 호출하여 필요한 데이터만 새로 불러올 수 있다.**
 
@@ -149,7 +149,7 @@ export default App;
 각 path에 따라 처음 들어간 기본 웹 화면에서는 Home.js의 모습이 보일 것이고,  
 주소창 뒤에 /about 을 작성하게 되면 About.js도 함께 보일 것이다.
 
-![result3](./Img/soojeong3.gif)
+![result3](../Img/soojeong3.gif)
 
 이때 /about을 입력하면 About 컴포넌트의 내용만이 표시될 줄 알았는데,  
 Home 컴포넌트의 내용도 함께 출력되어 이유를 알아보니
@@ -207,7 +207,7 @@ const App = () => {
 export default App;
 ```
 
-![result4](./Img/soojeong4.png)
+![result4](../Img/soojeong4.png)
 
 위와 같이 2가지 링크가 잘 만들어진 것을 확인할 수 있다.
 
@@ -321,7 +321,7 @@ App.js의 < Route path="/profile/:username" component={Profile} / > 에서
 그래서 velopert 링크를 누르면 username이 velopert에 해당하는 정보를 불러오고,  
 gildong 링크를 누르면 gildong에 해당하는 정보를 불러오게 된다.
 
-![result5](./Img/soojeong5.gif)
+![result5](../Img/soojeong5.gif)
 
 < 쿼리를 사용한 예제 코드 >
 
@@ -376,7 +376,7 @@ ex. ?value=1, ?value=true 와 같이 숫자 1, boolean 값 true가 아닌 **"1",
 그래서 숫자를 받아와야 하는 경우라면 **parseInt 함수** 를 이용해 숫자로 변환해주고,  
 위 예제처럼 논리 자료형 값을 사용해야 하는 경우라면 "true" 문자열이랑 일치하는지 확인해야 한다 !
 
-![result6](./Img/soojeong6.png)
+![result6](../Img/soojeong6.png)
 
 주소창에 ?detail=true 값을 추가해주면 About 페이지에 새로운 문구가 뜨는 것을 확인해볼 수 있다.
 
@@ -439,7 +439,7 @@ App 컴포넌트에서 각 Profile 별로 만들어놓은 링크를 지우고 Pr
 
 프로필 링크로 또 들어가게 되면, Profiles 내부에서 설정한 Profile 링크 2가지가 생기는 것을 볼 수 있다.
 
-![result7](./Img/soojeong7.gif)
+![result7](../Img/soojeong7.gif)
 
 <br />
 
@@ -494,7 +494,7 @@ export default HistorySample;
 HistorySample 컴포넌트를 만든 후 App 컴포넌트에서 HistorySample 컴포넌트로 가는 경로를 만들게 되면  
 HistorySample 내부에서 history 객체를 사용해 만든 뒤로가기, 홈으로 가기 2가지의 버튼이 나타나는 것을 볼 수 있다.
 
-![result8](./Img/soojeong8.png)
+![result8](../Img/soojeong8.png)
 
 history 객체를 사용하는 것 말고도 추가적인 부가 기능이 있다.
 
@@ -535,7 +535,7 @@ export default withRouter(WithRouterSample);
 
 이 컴포넌트를 Profiles 컴포넌트 안에 넣어주어 적용시키면,
 
-![result9](./Img/soojeong9.png)
+![result9](../Img/soojeong9.png)
 
 withRouter로 내보낸 컴포넌트가 나타나는 것을 볼 수 있다.  
 각 textarea에는 location과 match 객체에 대한 정보가 쓰여져있다.
@@ -549,7 +549,7 @@ URL 파라미터가 제대로 보인다.
 
 ex. Profile 컴포넌트로 WithRouterSample 컴포넌트를 옮겨보았더니 params 객체정보가 velopert와 gildong마다 잘 보이는 것을 확인할 수 있다.
 
-![result10](./Img/soojeong10.png)
+![result10](../Img/soojeong10.png)
 
 라우터 부가 기능 중 다른 것은 `Switch 컴포넌트다`.
 
