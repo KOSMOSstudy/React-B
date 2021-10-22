@@ -76,13 +76,129 @@ export default App;
 이런 이유는 /aobut 경로가 / 규칙에도 일치하기 때문에 발생한 현상이다.<br/>
 이를 수정하려면 Home을 위한 Route 컴포넌트 사용 시 `exact={true}` 이렇게 exact라는 props를 true로 설정하면 된다!!
 
+#### Link 컴포넌트를 사용해 다른 주소로 이동하기 
+
+Link 컴포넌트는 클릭하면 다른 주소로 이동시켜 주는 컴포넌트이다.<br/>
+
+> a태그와 Link 컴포넌트의 차이점<br/>
+- a태그 : 페이지를 전환하는 과정에서 페이지를 새로 불러오기 때문에 애플리케이션이 들고 있던 상태들을 모두 날려버린다.
+렌더링된 컴포넌트들도 모두 사라지고 다시 처음부터 렌더링해야 한다.
+- Link 컴포넌트 : 이를 사용해 페이지를 전환하면 페이지를 새로 불러오지 않고 애플리케이션은 그대로 유지한 상태에서 HTML5 History API를 사용해
+페이지의 주소만 변경해 준다. Link 컴포넌트 자체는 a태그로 이루어져 있지만, 페이지 전환을 방지하는 기능이 내장되어 있다! 
+
+`<Link to="주소">내용</Link>`
+
+*App.js 참고*
+
 ### 13.3 Route 하나에 여러 개의 path 설정하기
 
-내용 placeholder
+Route 하나에 여러 개의 path를 지정하는 것은 리액트 라우터 v5부터 적용된 기능이다.<br/>
+Route를 여러 번 사용하지 않는 대신 path props를 배열로 설정해 주면 여러 경로에서 같은 컴포넌트를 보여줄 수 있다!<br/>
+
+```javascript
+(...)
+<Route path={['/about', '/info']} component={About} />
+(...)
+```
 
 ### 13.4 URL 파라미터와 쿼리
 
-내용 placeholder
+페이지 주소를 정의할 때 가끔은 유동적인 값을 전달해야 할 때도 있다. <br/>
+이는 **파라미터와 쿼리**로 나눌 수 있다! <br/>
+
+이러한 상황에서 파라미터를 써야 할지 쿼리를 써야 할지 무조건 따라야 할 규칙은 없지만
+일반적으로는 아래와 같이 사용한다.<br/>
+
+- 파라미터 : 특정 아이디 혹은 이름을 사용해 조회할 때 사용
+- 쿼리 : 우리가 어떤 키워드를 검색하거나 페이지에 필요한 옵션을 전달할 때 사용
+
+#### URL 파라미터
+
+`/profile/velopert`와 같은 형식으로 뒷부분에 유동적인 username 값을 넣어 줄 때 해당 값을 
+props로 받아 와서 조회하는 방법을 알아보자! <br/>
+
+*Profile.js*
+```javascript
+import React from 'react';
+
+const data = {
+  velopert: {
+    name: '김민준',
+    description: '리액트를 좋아하는 개발자'
+  },
+  gildong: {
+    name: '홍길동',
+    description: '고전 소설 홍길동전의 주인공'
+  }
+};
+const Profile = ({match}) => {
+  const { username } = match.params;
+  const profile = data[username];
+  if(!profile){
+    return <div>존재하지 않는 사용자입니다.</div>;
+  }
+  return(
+    <div>
+      <h3>
+        {username}({profile.name})
+      </h3>
+      <p>{profile.description}</p>
+    </div>
+  );
+};
+export default Profile;
+```
+URL 파라미터를 사용할 때는 라우트로 사용되는 컴포넌트로 받아 오는 match라는 객체 안의 params 값을 참조한다.<br/>
+match 객체 안에는 현재 컴포넌트가 어떤 경로 규칙에 의해 보이는지에 대한 정보가 들어있다.<br/>
+App 컴포넌트에서 Profile 컴포넌트를 위한 라우터를 정의할 때 path 규칙에 `/profile/:username`이라고 넣어주면 된다!<br/>
+`<Route path="/profile/:username" component={Profile} />, <Link to="/profile/username">username 프로필</Link>`<br/>
+이렇게 설정하면 match.params.username 값을 통해 현재 username 값을 조회할 수 있다. <br/> 
+
+#### URL 쿼리
+
+**쿼리**는 location 객체에 들어 있는 search 값에서 조회할 수 있다.<br/>
+location 객체는 라우트로 사용된 컴포넌트에서 props로 전달되며, 웹 애플리케이션의 현재 주소에 대한 정보를 지니고 있다.<br/>
+
+```plaintext
+{
+  "pathname": "/about",
+  "search" : "?detail=true",
+  "hash" : ""
+}
+```
+위의 location 객체는 'http://localhost:3000/about?detail=true'로 들어갔을 때의 값이다.<br/>
+URL 쿼리를 읽을 때는 위 객체가 지닌 값 중에서 **search**값을 확인해야 한다!!<br/>
+이 값은 문자열 형태로 되어 있다. URL 쿼리는 '?detail=true&another=1'과 같이 문자열에 여러 가지 값을 설정해 줄 수 있다.<br/>
+search 값에서 특정 값을 읽어 오기 위해서는 **이 문자열을 객체 형태로 변환해 주어야 한다!**<br/>
+
+쿼리 문자열을 객체로 변환할 때는 qs라이브러리를 사용한다.<br/>
+`yarn add qs`<br/>
+
+*About.js*<br/>
+location.search 값에 있는 detail이 true인지 아닌지에 따라 추가 정보를 보여주도록 만들어보자.<br/>
+
+```javascript
+import React from 'react';
+import qs from 'qs';
+
+const About = ({ location }) => {
+  const query = qs.parse(location.search, {
+    ignoreQueryPrefix: true // 이 설정을 통해 문자열 맨 앞의 ?를 생략
+  });
+  const showDetail = query.detail === 'true'; // 쿼리의 파싱 결과 값은 문자열입니다.
+  return(
+    <div>
+      <h1>소개</h1>
+      <p>이 프로젝트는 리액트 라우터 기초를 실습해 보는 예제 프로젝트</p>
+      {showDetail && <p>detail값을 true로 설정하셨군요!</p>}
+    </div>
+  );
+};
+export default About;
+```
+쿼리를 사용할 때는 쿼리 문자열을 객체로 파싱하는 과정에서 결과 값은 언제나 **문자열**이라는 점에 !주의!<br/>
+숫자를 받아와야 한다면 parseInt 함수를 사용해 꼭 숫자로 변환해 주어야 하고, 지금처럼 논리 자료형 값을
+사용해야 하는 경우에는 정확히 "true" 문자열이랑 일치하는지 비교해 주어야 한다!!<br/>
 
 ### 13.5 서브 라우트
 
