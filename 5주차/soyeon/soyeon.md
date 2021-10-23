@@ -202,15 +202,131 @@ export default About;
 
 ### 13.5 서브 라우트
 
-내용 placeholder
+**서브 라우트**는 라우트 내부에 또 라우트를 정의하는 것을 의미한다.<br/>
+사용방법은 그냥 라우트로 사용되고 있는 컴포넌트의 내부에 Route 컴포넌트를 또 사용하면 된다!<br/>
+
+*Profiles.js*
+
+기존에는 App 컴포넌트에서 두 개의 프로필 링크를 모두 보여주었다.<br/>
+이를 잘라내서 프로필 링크를 보여주는 Profiles라는 라우트 컴포넌트를 따로 만들고,
+그 안에서 Profile 컴포넌트를 서브 라우트로 사용하도록 코드를 작성했다!<br/>
+
+```javascript
+import React from 'react';
+import {Link, Route} from 'react-router-dom';
+import Profile from './Profile';
+
+const Profiles = () => {  
+  return(
+    <div>
+      <h3>사용자 목록:</h3>
+      <ul>
+        <li>
+          <Link to="/profiles/velopert">velopert</Link>
+        </li>
+        <li>
+          <Link to="/profiles/gildong">gildong</Link>
+        </li>
+      </ul>
+      <Route 
+        path="profiles"
+        exact
+        render={() => <div>사용자를 선택해 주세요.</div>}
+        />
+        <Route path="/profiles/:username" component={Profile} />
+    </div>
+  );
+};
+export default Profiles;
+```
+첫 번째 Route 컴포넌트에는 component 대신 render라는 props를 넣어주었다.<br/>
+컴포넌트 자체를 전달하는 것이 아니라 보여주고 싶은 JSX를 넣어줄 수 있다!<br/>
+JSX에서 props를 설정할 때 값을 생략하면 자동으로 `true`로 설정된다.<br/>
+`exact => exact={true}`
 
 ### 13.6 리액트 라우터 부가 기능
 
-내용 placeholder
+#### history
+
+history 객체는 라우트로 사용된 컴포넌트에 match, location과 함께 전달되는 props 중 하나이다.<br/>
+이 객체를 통해 컴포넌트 내에 구현하는 메서드에서 라우터 API를 호출할 수 있다!<br/>
+> Example : 버튼 클릭 시 뒤로가기 / 로그인 후 화면 전환 / 다른 페이지로 이탈 방지 <br/>
+
+*HistorySample.js 참고*
+
+#### withRouter
+
+withRouter 함수는 HoC(Higher-order Component)이다.<br/>
+라우트로 사용된 컴포넌트가 아니어도 match, location, history 객체를 접근할 수 있게 해준다.<br/>
+withRouter를 사용할 때는 컴포넌트를 내보내 줄 때 함수로 감싸주어야 한다.<br/>
+`Ex. export default withRouter(WithRouterSample);`<br/>
+
+*WithRouterSample.js 참고*
+
+WithRouterSample을 Profiles 컴포넌트에 렌더링을 해보면 match 객체의 params 값이 비어 있는 것을 
+확인할 수 있다. <br/>
+이는 withRouter를 사용하면 현재 자신을 보여 주고 있는 라우트 컴포넌트(현재 Profiles)를
+기준으로 match가 전달되기 때문이다.<br/>
+Profiles를 위한 라우트를 설정할 때 `path="/profiles"`라고만 입력했으므로 username 파라미터를
+읽어오지 못하는 것이다.<br/>
+이를 Profiles말고 Profile 컴포넌트에 넣으면 match쪽에 URL 파라미터가 제대로 보일 것이다!!
+
+#### Switch
+
+Switch 컴포넌트는 여러 Route를 감싸서 그 중 일치하는 단 하나의 라우트만을 렌더링시켜 준다.<br/>
+이를 사용하면 모든 규칙과 일치하지 않을 때 보여줄 Not Found 페이지도 구현할 수 있다.
+
+*App.js 일부*
+```javascript
+<Switch>
+    <Route path="/" component={Home} exact={true} />
+    <Route path={['/about', '/info']} component={About} />
+    <Route path="/profiles" component={Profiles} />
+    <Route path="/history" component={HistorySample} />
+    <Route
+      render={({location}) => (
+         // path를 따로 정의하지 않으면 모든 상황에 렌더링됨
+         <div>
+           <h2>이 페이지는 존재하지 않습니다:</h2>
+          <p>{location.pathname}</p>
+         </div>
+      )}
+    />
+</Switch>
+```
+
+#### NavLink
+
+NavLink는 Link와 비슷하다. 
+현재 경로와 Link에서 사용하는 경로가 일치하는 경우 특정 스타일 혹은 CSS 클래스를
+적용할 수 있는 컴포넌트이다.<br/>
+NavLink에서 링크가 활성화되었을 때의 스타일을 적용할 때는 **activeStyle**값을,
+CSS 클래스를 적용할 때는 **activeClassName**값을 props로 넣어 주면 된다.<br/>
+
+*Profiles.js 일부*
+```javascript
+<div>
+  <h3>사용자 목록:</h3>
+  <ul>
+    <li>
+      <NavLink activeStyle={activeStyle} to="/profiles/velopert">velopert</NavLink>
+    </li>
+    <li>
+      <NavLink activeStyle={activeStyle} to="/profiles/gildong">gildong</NavLink>
+    </li>
+  </ul>
+</div>
+```
 
 ### 13.7 정리
 
-내용 placeholder
+이 장에서는 리액트 라우터를 사용해 주소 경로에 따라 다양한 페이지를 보여 주는 방법을 알아보았다.<br/>
+큰 규모의 프로젝트를 진행하다 보면 한 가지 문제점이 있다.<br/>
+바로 웹 브라우저에서 사용할 컴포넌트, 상태 관리를 하는 로직, 그 외 여러 기능을 구현하는 함수들이 
+점점 쌓이면서 최종 결과물인 자바스크립트 파일이 너무 커진다는 것이다...<br/>
+이러한 경우 필요한 기술이 라우트에 따라 필요한 컴포넌트만 불러오고, 다른 컴포넌트는 다른 페이지를
+방문하는 등의 필요한 시점에 불러오느 **코드 스플리팅**이다!!!<br/>
+이에 대해서는 19장에서 배워보자 :)
 
 ## 14장
 
