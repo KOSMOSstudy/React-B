@@ -173,7 +173,7 @@ Home을 위한 Route 컴포넌트를 사용할 때 exact라는 props를 true로 
 일반적으로 링크를 설정할 때는 a 태그를 사용했으나,  
 📌**리액트 라우터에서는 이 태그를 사용해선 안된다 !**
 
-< 이유 >
+< 이유 >  
 a 태그는 페이지를 전환하는 과정에서 페이지를 새로 불러오기 때문에 앱이 들고 있던 상태들을 모두 날려버린다.  
 즉, **렌더링 된 컴포넌트들도 모두 사라지고, 다시 처음부터 렌더링하게 된다.**
 
@@ -315,7 +315,7 @@ Profile.js 컴포넌트 파일에서 임의로 2가지 user정보를 추가한�
 그 다음 route에서 component로 정보를 넘기기 위해 match를 사용한다.
 
 App.js의 < Route path="/profile/:username" component={Profile} / > 에서  
-**/: 뒷 부분은 파라미터로 전해줄 props의 이름이라고 보면 된다.**
+**/: 뒷 부분은 파라미터로 전해줄 props의 이름이라고 보면 된다.**  
 즉, match.params.username 값을 통해 현재 username의 값을 조회할 수 있다.
 
 그래서 velopert 링크를 누르면 username이 velopert에 해당하는 정보를 불러오고,  
@@ -607,24 +607,373 @@ CSS 클래스를 적용할 때는 `activeClassName 값을 props로` 넣는다.
 불러오면 더 효율적인 웹페이지를 만들 수 있다.  
 그리고 이를 해결해주는 기술 중 하나가 `코드 스플리팅` 이다.
 
+<br />
+
 ## 14장
 
 ### 14.1 비동기 작업의 이해
 
-내용 placeholder
+서버의 API를 이용할 때는 송수신과정에서 시간이 걸리기 때문에 작업이 즉시 처리되지 않는다.  
+그래서 응답을 받을 때까지 기다린 후 전달받은 응답데이터를 처리하는데,  
+해당 작업을 `비동기적`으로 처리하게 된다.
+
+![result11](../Img/soojeong11.png)
+
+위 그림처럼 작업이 다 끝날 때 까지 기다린 후 새로운 작업을 하는 과정을 `동기적`이라고 한다.  
+그러나 동기적인 처리는 해당 요청이 끝날 때까지 기다리는 동안 중지 상태가 되기 때문에 다른 작업을 할 수 없다.
+
+반면에 비동기적인 처리는 웹앱이 멈추지 않기 때문에 여러 가지 요청을 처리하거나 다른 함수를 호출할수도 있다.
+
+비동기적인 처리는 API 호출 외에도 setTimeout 함수와 같은 특정 작업을 예약할 때도 쓰인다.
+
+<예제 코드 1>
+
+```javascript
+function printMe() {
+    console.log("Hello World!");
+}
+
+setTimeout(printMe, 3000);
+console.log("대기 중 ,,,");
+```
+
+![result12](../Img/soojeong12.png)
+
+해당 콘솔창을 보면, "대기 중 ,,," 글씨가 먼저 나오고 3초 후 printMe 함수로 설정해놓은 Hello World가 출력된다.  
+이때 3초 동안 멈춘 것이 아니라 위부터 아래로 일단 호출되고, 3초 뒤에 지정해 준 printMe가 호출되는 것이다.  
+이런 함수를 **콜백 함수**라고도 한다.
+
+<예제 코드 2>
+
+```javascript
+function increase(number, callback) {
+    setTimeout(() => {
+        const result = number + 10;
+        if (callback) {
+            callback(result);
+        }
+    }, 1000);
+}
+
+increase(0, (result) => {
+    console.log(result);
+});
+```
+
+1초 뒤 10을 더해 반환하는 함수의 예제인데, 여러 번 순차적으로 처리하고 싶다면 콜백 함수를 중첩하여 구현할수도 있다.
+
+그러나 콜백 안에 콜백을 넣고, 그 콜백 안에 또 콜백을 넣어 구현하게 되면서 코드의 가독성이 떨어진다.  
+=> 이를 **콜백 지옥**이라고 하며, 지양해야 하는 형태의 코드다.
+
+이런 콜백 지옥이 형성되지 않도록 ES6에 도입된 기능으로 **Promise**가 있다.
+
+```javascript
+function increase(number) {
+    const promise = new Promise((resolve, reject) => {
+        //resolve : 성공, reject : 실패
+        setTimeout(() => {
+            const result = number + 10;
+            if (result > 50) {
+                const e = new Error("NumberTooBig");
+                return reject(e);
+            }
+            resolve(result);
+        }, 1000);
+    });
+    return promise;
+}
+
+increase(0)
+    .then((number) => {
+        //Promise로 resolve된 값은 .then으로 받아올 수 있다
+        console.log(number);
+        return increase(number);
+    })
+    //Promise를 return해주면 바깥에서 .then으로 처리가 가능
+    .then((number) => {
+        console.log(number);
+        return increase(number);
+    })
+    .then((number) => {
+        console.log(number);
+        return increase(number);
+    })
+    .then((number) => {
+        console.log(number);
+        return increase(number);
+    })
+    .then((number) => {
+        console.log(number);
+        return increase(number);
+    })
+    .catch((e) => {
+        //도중에 에러가 발생하면 .catch로 알 수 있다
+        console.log(e);
+    });
+```
+
+![result13](../Img/soojeong13.png)
+
+콜백 지옥이라고 불린 코드와 달리 함수를 여러 번 감싸는 것이 아니고  
+.then을 사용하여 그 다음 작업을 설정하는 것이기 때문에  
+**콜백 지옥이 형성되지 않는다.**
+
+이 Promise를 쉽게 사용할 수 있도록 도와주는 문법이 있는데 **async/await** 이다.  
+이 문법을 사용하려면 함수 앞부분에 async 키워드를 추가하고,  
+해당 함수 내부에서 Promise 앞부분에 await 키워드를 사용한다.
+
+< async/await 예제 코드 >
+
+```javascript
+function increase(number) {
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const result = number + 10;
+            if (result > 50) {
+                const e = new Error("NumberTooBig");
+                return reject(e);
+            }
+            resolve(result);
+        }, 1000);
+    });
+    return promise;
+}
+
+async function runTasks() {
+    try {
+        let result = await increase(0);
+        console.log(result);
+        result = await increase(result);
+        console.log(result);
+        result = await increase(result);
+        console.log(result);
+        result = await increase(result);
+        console.log(result);
+        result = await increase(result);
+        console.log(result);
+        result = await increase(result);
+        console.log(result);
+    } catch (e) {
+        console.log(e);
+    }
+}
+```
+
+<br />
 
 ### 14.2 axios로 API 호출해서 데이터 받아 오기
 
-내용 placeholder
+> 💡**axios** : 현재 가장 많이 사용되는 자바스크립트 HTTP 클라이언트
+
+axios 라이브러리의 특징은 HTTP 요청을 Promise 기반으로 처리한다.
+
+axios를 사용하기 위해서는 axois 라이브러리를 따로 설치해야 한다.  
+axios를 사용할 리액트 앱을 만든 후 해당 디렉토리로 이동하여 axios를 설치해준다.
+
+=> 설치 명령어는 **yarn add axios** 를 입력하면 된다.
+
+< axios 예제 코드 >
+
+```javascript
+import React, { useState } from "react";
+import axios from "axios";
+
+const App = () => {
+    const [data, setData] = useState(null);
+    const onClick = () => {
+        axios
+            .get("https://jsonplaceholder.typicode.com/todos/1")
+            .then((response) => {
+                setData(response.data);
+            });
+    };
+    return (
+        <div>
+            <div>
+                <button onClick={onClick}>불러오기</button>
+            </div>
+            {data && (
+                <textarea
+                    rows={7}
+                    value={JSON.stringify(data, null, 2)}
+                    readOnly={true}
+                />
+            )}
+        </div>
+    );
+};
+
+export default App;
+```
+
+onClick 함수에 axios.get 함수를 더하여 제공되는 가짜 API 값을 불러오기 버튼으로 볼 수 있는 코드다.  
+axios.get은 파라미터로 전달된 주소에 GET요청을 해 주고, .then을 통해 비동기적 확인이 가능하다.
+
+위 코드에 14.1절에서 언급한 async를 적용할 수도 있다.
+
+< axios, async/await 예제 코드 >
+
+```javascript
+const onClick = async () => {
+    try {
+        const response = await axios.get(
+            "https://jsonplaceholder.typicode.com/todos/1"
+        );
+        setData(response.data);
+    } catch (e) {
+        console.log(e);
+    }
+};
+```
+
+onClick 부분에 async/await를 적용하였는데 적용할 때는 async () => {} 같은 형태로 적용한다.
+
+<br />
 
 ### 14.3 newsapi API 키 발급받기
 
-내용 placeholder
+가짜 API 말고, 한국 뉴스 API를 이용하여 간단한 뷰어를 만들기 위해서는  
+newsapi 홈페이지에서 API키를 발급받은 후 API를 가져올 필요가 있다.
+
+기존 axios.get placeholder 부분에 뉴스 API로 대체해볼 것이다.
+
+```javascript
+const onClick = async () => {
+    try {
+        const response = await axios.get(
+            "https://newsapi.org/v2/top-headlines?country=kr&apiKey=cf55888894fd42e89556910ba0861d7d"
+        );
+        setData(response.data);
+    } catch (e) {
+        console.log(e);
+    }
+};
+```
+
+![result14](../Img/soojeong14.png)
+
+위와 같이 데이터가 잘 불러와진 것을 볼 수 있다.
+
+이제 데이터를 보기 좋게 만드는 UI제작 과정이 필요하다.
+
+<br />
 
 ### 14.4 뉴스 뷰어 UI 만들기
 
-내용 placeholder
+뷰어를 만들기 위한 2가지가 필요하다.
+
+1. 뉴스 정보를 보여주는 컴포넌트 (NewsItem)
+2. 뉴스 데이터가 들어있는 배열을 컴포넌트로 변환하여 렌더링하는 컴포넌트 (NewsList)
+
+```javascript
+//NewsItem.js
+import React from "react";
+import styled from "styled-components";
+
+const NewsItemBlock = styled.div`
+    display: flex;
+    .thumbnail {
+        margin-right: 1rem;
+        img {
+            display: block;
+            width: 160px;
+            height: 100px;
+            object-fit: cover;
+        }
+    }
+    .contents {
+        h2 {
+            margin: 0;
+            a {
+                color: black;
+            }
+        }
+        p {
+            margin: 0;
+            line-height: 1.5;
+            margin-top: 0.5rem;
+            white-space: normal;
+        }
+    }
+    & + & {
+        margin-top: 3rem;
+    }
+`;
+
+const NewsItem = ({ article }) => {
+    const { title, description, url, urlToImage } = article;
+    return (
+        <NewsItemBlock>
+            {urlToImage && (
+                <div className="thumbnail">
+                    <a href={url} target="_blank" rel="noopener noreferrer">
+                        <img src={urlToImage} alt="thumbnail" />
+                    </a>
+                </div>
+            )}
+            <div className="contents">
+                <h2>
+                    <a href={url} target="_blank" rel="noopener noreferrer">
+                        {title}
+                    </a>
+                </h2>
+                <p>{description}</p>
+            </div>
+        </NewsItemBlock>
+    );
+};
+
+export default NewsItem;
+```
+
+```javascript
+//NewsList.js
+import React from "react";
+import styled from "styled-components";
+import NewsItem from "./NewsItem";
+
+const NewsListBlock = styled.div`
+    box-sizing: border-box;
+    padding-bottom: 3rem;
+    width: 768px;
+    margin: 0 auto;
+    margin-top: 2rem;
+    @media screen and (max-width: 768px) {
+        width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+`;
+
+const sampleArticle = {
+    title: "제목",
+    description: "내용",
+    url: "https://google.com",
+    urlToImage: "https://via.placeholder.com/160",
+};
+
+const NewsList = () => {
+    return (
+        <NewsListBlock>
+            <NewsItem article={sampleArticle} />
+            <NewsItem article={sampleArticle} />
+            <NewsItem article={sampleArticle} />
+            <NewsItem article={sampleArticle} />
+            <NewsItem article={sampleArticle} />
+            <NewsItem article={sampleArticle} />
+        </NewsListBlock>
+    );
+};
+
+export default NewsList;
+```
+
+![result15](../Img/soojeong15.png)
+
+우리가 불러온 뉴스 API를 아직 적용시키지 않고, 예시데이터로 어떻게 나타나는지 틀만 잡아보았다.
+
+다음 절에서는 예시데이터로 나타낸 부분에 우리가 불러온 뉴스 API를 적용시켜보는 시간을 가질 것이다.
+
+<br />
 
 ---
-
-질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
