@@ -332,20 +332,199 @@ CSS 클래스를 적용할 때는 **activeClassName**값을 props로 넣어 주�
 
 ### 14.1 비동기 작업의 이해
 
-내용 placeholder
+웸 애플리케이션을 만들다 보면 처리할 때 시간이 걸리는 작업이 있다.<br/>
+> Ex) 서버의 API를 사용해야 할 때 -> 네트워크 송수신 과정에서 시간이 걸리기 때문에
+작업이 즉시 처리되는 것이 아니라 응답을 받을 때까지 기다렸다가 전달받은 응답 데이터를 처리
+
+*이 과정에서 해당 작업을 비동기적으로 처리하게 된다!*
+
+> 만약 작업을 동기적으로 처리하게 된다면?<br/>
+요청이 끝날 때까지 기다리는 동안 중지 상태가 되기 때문에 다른 작업을 할 수 없다.<br/>
+
+하지만 이를 비동기적으로 처리한다면 웹 애플리케이션이 멈추지 않기 때문에 동시에 여러 가지 
+요청을 처리할 수도 있고 기다리는 과정에서 다른 함수도 호출할 수 있다!!<br/>
+
+이렇게 서버 APi를 호출할 때 외에도 작업을 비동기적으로 처리할 때가 있는데,
+바로 `setTimeout`함수를 사용해 특정 작업을 예약할 때이다.<br/>
+
+```javascript
+function printMe(){
+  console.log('Hello World!');
+}
+setTimeout(printMe, 3000);
+console.log('대기 중...');
+```
+setTimeout이 사용되는 시점에서 코드가 3초 동안 멈추는 것이 아니라, 일단 코드가 위에서 
+아래까지 다 호출되고 3초 뒤에 우리가 지정해 준 printMe가 호출되고 있다!<br/>
+
+#### 콜백 함수
+
+'나중에 불러주세요~'하는 함수를 일컫는다!<br/>
+자바스크립트에서 비동기 작업을 할 때 가장 흔히 사용되는 방법은 콜백 함수를 사용하는 것이다.<br/>
+위 코드에서는 printMe가 3초 뒤에 호출되도록 printMe 함수 자체를 setTimeout 함수의 인자로 전달해 주었다.<br/>
+이런 함수를 콜백 함수라고 한다! 
+
+콜백 함수 안에 또 다른 콜백을 넣어 구현할 수도 있다.
+```javascript
+function increase(number, callback){
+  setTimeout(() => {
+    const result = number + 10;
+    if(callback){
+      callback(result);
+    }
+  }, 1000);
+}
+console.log('작업시작');
+increase(0, result => {
+  console.log(result);
+  increase(result, result => {
+    console.log(result);
+    increase(result, result => {
+      console.log(result);
+      increase(result, result => {
+        console.log(result);
+        console.log('작업완료');
+      });
+    });
+  });
+});
+```
+하지만 이렇게 콜백을 여러번 사용하면 너무 여러번 코드가 중첩되므로 코드의 가독성이 떨어진다.<br/>
+이러한 형태의 코드를 '콜백 지옥'이라고 부른다.
+
+#### Promise
+
+Promise는 콜백 지옥 같은 코드가 형성되지 않게 하는 방안으로 ES6에 도입된 기능이다.<br/>
+앞의 코드를 Promise를 사용해 구현해 보자.
+```javascript
+function increase(number){
+  const promise = new Promise((resolve, reject) => {
+    //resolve는 성공, reject는 실패
+    setTimeout(() => {
+      const result = number + 10;
+      if(result > 50){
+        // 50보다 높으면 에러 발생시키기
+        const e = new Error('Number Too Big');
+        return reject(e);
+      }
+      resolve(result); // number 값에 +10 후 성공 처리
+    }, 1000);
+  });
+  return promise;
+}
+increase(0)
+  .then(number => {
+    // Promise에서 resolve된 값은 .then을 통해 받아 올 수 있음
+    console.log(number);
+    return increase(number); // Promise를 리턴하면
+  })
+  .then(number => {
+    // 또 .then으로 처리 가능
+    console.log(number);
+    return increase(number);
+  })
+  .then(number => {
+    console.log(number);
+    return increase(number);
+  })
+  .then(number => {
+    console.log(number);
+    return increase(number);
+  })
+  .then(number => {
+    console.log(number);
+    return increase(number);
+  })
+  .catch(e => {
+    // 도중에 에러가 발생한다면 .catch를 통해 알 수 있음
+    console.log(e);
+  });
+```
+여러 작업을 연달아 처리한다고 해서 함수를 여러 번 감싸는 것이 아니라,
+`.then`을 사용해 그 다음 작업을 설정하기 때문에 콜백 지옥이 형성되지 않는다.
+
+#### async/await
+
+async/await은 Promise를 더 쉽게 사용할 수 있도록 해 주는 ES8 문법이다.<br/>
+이 문법을 사용하려면
+- 함수의 앞부분에 async 키워드를 추가
+- 해당 함수 내부에서 Promise의 앞부분에 await 키워드를 사용
+이렇게 하면 Promise가 끝날 때까지 기다리고, 결과 값을 특정 변수에 담을 수 있다.<br/>
+
+```javascript
+function increase(number){
+  const promise = new Promise((resolve, reject) => {
+    //resolve는 성공, reject는 실패
+    setTimeout(() => {
+      const result = number + 10;
+      if(result > 50){
+        // 50보다 높으면 에러 발생시키기
+        const e = new Error('Number Too Big');
+        return reject(e);
+      }
+      resolve(result); // number 값에 +10 후 성공 처리
+    }, 1000);
+  });
+  return promise;
+}
+async function runTasks(){
+  try{
+    let result = await increase(0);
+    console.log(result);
+    result = await increase(result);
+    console.log(result);
+    result = await increase(result);
+    console.log(result);
+    result = await increase(result);
+    console.log(result);
+    result = await increase(result);
+    console.log(result);
+    result = await increase(result);
+    console.log(result);
+  }catch(e){
+    console.log(e);
+  }
+}
+```
 
 ### 14.2 axios로 API 호출해서 데이터 받아 오기
 
-내용 placeholder
+**axios**는 현재 가장 많이 사용되고 있는 자바스크립트 HTTP 클라이언트이다.
+
+라이브러리 특징 <br/>
+*-> HTTP 요청을 Promise 기반으로 처리한다!!*
+
+`axios.get('주소').then(response => {setData(response.data);});`
+
+API를 불러오는 과정에서 axios.get 함수를 사용했다.<br/>
+이 함수는 파라미터로 전달된 주소에 GET 요청을 해준다.<br/>
+그리고 이에 대한 결과는 `.then`을 통해 비동기적으로 확인할 수 있다!<br/>
 
 ### 14.3 newsapi API 키 발급받기
 
-내용 placeholder
+https://newsapi.org/register 에 가입하면 발급받을 수 있다:)
 
 ### 14.4 뉴스 뷰어 UI 만들기
 
-내용 placeholder
+- NewsItem : 각 뉴스 정보를 보여 주는 컴포넌트
+- NewsList : API를 요청하고 뉴스 데이터가 들어 있는 배열을 컴포넌트 배열로 변환해 렌더링해 주는 컴포넌트
 
----
+#### NewsItem 만들기
 
-질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
+- title : 제목
+- description : 내용
+- url : 링크
+- urlToImage : 뉴스 이미지
+
+NewsItem 컴포넌트는 article이라는 객체를 props로 받아 와서 사용한다.<br/>
+
+*NewsItem.js 참고*
+
+#### NewsList 만들기
+
+나중에 이 컴포넌트에서 API 요청을 할 것이다!<br/>
+아직 데이터를 불러오지 않고 있으니 sampleArticle이라는 객체에 미리 예시 데이터를 넣은 후 
+각 컴포넌트에 전달해 가짜 내용이 보이도록 해보자.
+
+*NewsList.js 참고*
+
