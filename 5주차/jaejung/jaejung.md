@@ -383,12 +383,12 @@ export default App;
 
 ### 13.6 리액트 라우터 부가 기능
 
-- history
+- history    
   history 객체는 라우트로 사용된 컴포넌트에 match, location과 함께 전달되는 props 중 하나로, 이 객체를 통해 컴포넌트 내에 구현하는 메서드에서 라우터 API를 호출
 
 특정 버튼을 눌렀을 때 뒤로 가거나, 로그인 후 화면을 전환하거나, 다른 페이지로 이탈하는 것을 방지해야 할 때 history를 활용
 
-- withRouter
+- withRouter    
   withRouter 함수는 HoC(Higher-order Component)입니다. 라우트로 사용된 컴포넌트가 아니어도 match, location, history 객체를 접근할 수 있게 해 준다.
 
 WithRouterSample.js
@@ -444,9 +444,9 @@ const Profiles = () => {
 export default Profiles;
 ```
 
-- Switch
+- Switch    
   Switch 컴포넌트는 여러 Route를 감싸서 그중 일치하는 단 하나의 라우트만을 렌더링시켜 준다. Switch를 사용하면 모든 규칙과 일치하지 않을 때 보여 줄 Not Found 페이지도 구현할 수 있다.
-- NavLink
+- NavLink   
   NavLink는 Link와 비슷합니다.
   현재 경로와 Link에서 사용하는 경로가 일치하는 경우 특정 스타일 혹은 CSS 클래스를 적용할 수 있는 컴포넌트이다.
 
@@ -454,7 +454,7 @@ export default Profiles;
 
 리액트 라우터를 사용하여 주소 경로에 따라 다양한 페이지를 보여 주는 방법을 알아보았다.
 
-큰 규모의 프로젝트를 진행하다 보면 한 가지 문제가 발생합니다.
+큰 규모의 프로젝트를 진행하다 보면 한 가지 문제가 발생한다.
 바로 웹 브라우저에서 사용할 컴포넌트, 상태 관리를 하는 로직, 그 외 여러 기능을 구현하는 함수들이 점점 쌓이면서 최종 결과물인 자바스크립트 파일의 크기가 매우 커진다는 점이다.
 
 ## 14장
