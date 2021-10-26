@@ -459,22 +459,308 @@ export default Profiles;
 
 ## 14장
 
+지금까지 배운 것을 활용하여 
+
+카테고리별로 최신 뉴스 목록을 보여 주는 뉴스 뷰어 프로젝트를 진행해 보자!!!!!! 
+
+~~아자아자!!! 화이자!!~~
+
 ### 14.1 비동기 작업의 이해
 
-내용 placeholder
+웹 애플리케이션을 만들다 보면 처리할 때 시간이 걸리는 작업이 있다.
+
+서버의 API를 사용해야 할 때는 네트워크 송수신 과정에서 시간이 걸리기 때문에 작업이 즉시 처리되는 것이 아니라, 응답을 받을 때까지 기다렸다가 전달받은 응답 데이터를 처리를 한다.
+
+이 과정에서 해당 작업을 비동기적으로 처리하게 된다.
+
+만약 작업을 동기적으로 처리한다면 요청이 끝날 때까지 기다리는 동안 중지 상태가 되기 때문에 다른 작업을 할 수 없다.
+
+때문에 비동기적 방법으로 처리를 해서 웹 애플리케이션이 멈추지 않고도 동시에 여러 가지 요청을 처리할 수도 있고, 기다리는 과정에서 다른 함수도 호출할 수 있다.
+
+자바스크립트에서 비동기 작업을 할 때 가장 흔히 사용하는 방법은 콜백 함수를 사용하는 것이다. 
+
+- Promise    
+Promise는 콜백 지옥 같은 코드가 형성되지 않게 하는 방안
+
+```jsx
+function increase(number) {
+const promise = new Promise((resolve, reject) => {
+  // resolve는 성공, reject는 실패
+  setTimeout(() => {
+    const result = number + 10;
+    if (result > 50) {
+      // 50보다 높으면 에러 발생시키기
+      const e = new Error('NumberTooBig');
+      return reject(e);
+    }
+    resolve(result); // number 값에 +10 후 성공 처리
+  }, 1000);
+});
+return promise;
+}
+
+increase(0)
+.then(number => {
+  // Promise에서 resolve된 값은 .then을 통해 받아 올 수 있음
+  console.log(number);
+  return increase(number); // Promise를 리턴하면
+})
+.then(number => {
+  // 또 .then으로 처리 가능
+  console.log(number);
+  return increase(number);
+})
+.then(number => {
+  console.log(number);
+  return increase(number);
+})
+.then(number => {
+  console.log(number);
+  return increase(number);
+})
+.then(number => {
+  console.log(number);
+  return increase(number);
+})
+.catch(e => {
+  // 도중에 에러가 발생한다면 .catch를 통해 알 수 있음
+  console.log(e);
+});
+```
+
+여러 작업을 연달아 처리한다고 해서 함수를 여러 번 감싸는 것이 아니라 .then을 사용하여 그다음 작업을 설정하기 때문에 콜백 지옥이 형성되지 않는다.
+
+- async/await    
+async/await는 Promise를 더욱 쉽게 사용할 수 있도록 해 주는 ES2017(ES8) 문법
+
+```jsx
+function increase(number) {
+const promise = new Promise((resolve, reject) => {
+  // resolve는 성공, reject는 실패
+  setTimeout(() => {
+    const result = number + 10;
+    if (result > 50) { // 50보다 높으면 에러 발생시키기
+      const e = new Error(‘NumberTooBig‘);
+              return reject(e);
+    }
+          resolve(result); // number 값에 +10 후 성공 처리
+  }, 1000)
+});
+return promise;
+}async function runTasks() {
+try { // try/catch 구문을 사용하여 에러를 처리합니다.
+  let result = await increment(0);
+  console.log(result);
+  result = await increment(result);
+  console.log(result);
+  result = await increment(result);
+  console.log(result);
+  result = await increment(result);
+  console.log(result);
+  result = await increment(result);
+  console.log(result);
+  result = await increment(result);
+  console.log(result);
+} catch (e) {
+  console.log(e);
+}
+}
+```
 
 ### 14.2 axios로 API 호출해서 데이터 받아 오기
 
-내용 placeholder
+axios는 현재 가장 많이 사용되고 있는 자바스크립트 HTTP 클라이언트이다. 이 라이브러리의 특징은 HTTP 요청을 Promise 기반으로 처리한다는 점이다.
+
+`yarn create react-app news-viewer`
+
+`cd news-viewer`
+
+`yarn add axios`
+
+App.js
+
+```jsx
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const App = () => {
+const [data, setData] = useState(null);
+const onClick = () => {
+axios.get('[https://jsonplaceholder.typicode.com/todos/1](https://jsonplaceholder.typicode.com/todos/1)').then(response => {
+setData(response.data);
+});
+};
+return (
+<div>
+<div>
+<button onClick={onClick}>불러오기</button>
+</div>
+{data && <textarea rows={7} value={JSON.stringify(data, null, 2)} readOnly={true} />}
+</div>
+);
+};
+
+export default App;
+```
 
 ### 14.3 newsapi API 키 발급받기
 
-내용 placeholder
+newsapi에서 제공하는 API를 사용하여 최신 뉴스를 불러온 후 보여 주는 것이 목표이다!
+
+**[https://newsapi.org/register](https://newsapi.org/register) 
+여기서 API발급 받기**
+
+```jsx
+import React, { useState } from ‘react‘;
+import axios from ‘axios‘;const App = () => {
+  const [data, setData] = useState(null);
+  const onClick = async () => {
+    try {
+      const response = await axios.get(
+        ‘https://newsapi.org/v2/top-headlines?country=kr&apiKey=0(Key)‘,
+      );
+      setData(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  return (
+    <div>
+      <div>
+        <button onClick={onClick}>불러오기</button>
+      </div>
+      {data && <textarea rows={7} value={JSON.stringify(data, null, 2)} />}
+    </div>
+  );
+};export default App;
+```
+
+기존에 리액트 프로젝트에서 사용했던 JSONPlaceholder 가짜 API를 전체 뉴스를 불러오는 API로 대체했다.
+
+(사진)
 
 ### 14.4 뉴스 뷰어 UI 만들기
 
-내용 placeholder
+styled-components를 사용하여 뉴스 정보를 보여 줄 컴포넌트를 만들어 보자
+
+`yarn add styled-components`
+
+- NewsItem 만들기
+뉴스 데이터 필드는 아래와 같습니다.
+
+title: 제목
+description: 내용
+url: 링크
+urlToImage: 뉴스 이미지
+
+NewsItem 컴포넌트는 article이라는 객체를 props로 통째로 받아 와서 사용합니다.
+
+```jsx
+import React from ‘react‘;
+import styled from ‘styled-components‘;
+
+const NewsItemBlock = styled.div`
+  display: flex;
+
+.thumbnail {
+    margin-right: 1rem;
+    img {
+      display: block;
+      width: 160px;
+      height: 100px;
+      object-fit: cover;
+    }
+  }
+  .contents {
+    h2 {
+      margin: 0;
+      a {
+        color: black;
+      }
+    }
+    p {
+      margin: 0;
+      line-height: 1.5;
+      margin-top: 0.5rem;
+      white-space: normal;
+    }
+  }
+  & + & {
+    margin-top: 3rem;
+  }
+`;
+const NewsItem = ({ article }) => {
+  const { title, description, url, urlToImage } = article;
+  return (
+    <NewsItemBlock>
+      {urlToImage && (
+        <div className=“thumbnail“>
+          <a href={url} target=“_blank“ rel=“noopener noreferrer“>
+            <img src={urlToImage} alt=“thumbnail“ />
+          </a>
+        </div>
+      )}
+      <div className=“contents“>
+        <h2>
+          <a href={url} target=“_blank“ rel=“noopener noreferrer“>
+            {title}
+          </a>
+        </h2>
+        <p>{description}</p>
+      </div>
+    </NewsItemBlock>
+  );
+};
+
+export default NewsItem;
+```
 
 ---
 
-질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
+- NewsList 만들기
+
+이 컴포넌트에서 API를 요청하게 될 텐데 지금은 아직 데이터를 불러오지 않고 있으니 sampleArticle이라는 객체에 미리 예시 데이터를 넣은 후 각 컴포넌트에 전달하여 가짜 내용이 보이게 해 하자.
+
+components/NewsList.js
+
+```jsx
+import React from 'react';
+import styled from 'styled-components';
+import NewsItem from './NewsItem';
+
+const NewsListBlock = styled.div</span>
+  <span class="co33">box-sizing</span><span class="co34">:</span> <span class="co33">border-box</span><span class="co36">;</span>
+  <span class="co33">padding-bottom</span><span class="co34">:</span> <span class="co32">3rem</span><span class="co36">;</span>
+  <span class="co33">width</span><span class="co34">:</span> <span class="co32">768px</span><span class="co36">;</span>
+  <span class="co33">margin</span><span class="co34">:</span> <span class="co32">0</span> <span class="co33">auto</span><span class="co36">;</span>
+  <span class="co33">margin-top</span><span class="co34">:</span> <span class="co32">2rem</span><span class="co36">;</span>
+  <span class="co46">@media</span> <span class="co32">screen</span> <span class="co35">and</span><span class="co36"> (</span><span class="co33">max-width</span><span class="co34">:</span> <span class="co32">768px</span><span class="co36">) {</span>
+    <span class="co33">width:</span> <span class="co32">100%</span><span class="co36">;</span>
+    <span class="co33">padding-left:</span> <span class="co32">1rem</span><span class="co36">;</span>
+    <span class="co33">padding-right:</span> <span class="co32">1rem</span><span class="co36">;</span>
+  }
+<span class="co31">;
+
+const sampleArticle = {
+  title: '제목',
+  description: '내용',
+  url: 'https://google.com',
+  urlToImage: 'https://via.placeholder.com/160',
+};
+
+const NewsList = () => {
+  return (
+    <NewsListBlock>
+      <NewsItem article={sampleArticle} />
+      <NewsItem article={sampleArticle} />
+      <NewsItem article={sampleArticle} />
+      <NewsItem article={sampleArticle} />
+      <NewsItem article={sampleArticle} />
+      <NewsItem article={sampleArticle} />
+    </NewsListBlock>
+  );
+};
+
+export default NewsList;
+```
+
