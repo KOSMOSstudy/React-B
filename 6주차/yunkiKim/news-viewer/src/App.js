@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState} from "react";
+
+import {Api} from "./lib/custormAxios";
+import {ServerPath} from "./lib/path";
+import NewsItem from "./components/NewsItem";
+import NewsList from "./components/NewsList";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <NewsList></NewsList>
   );
+  // const [data, setData] = useState(null);
+  //
+  // const handleClick = () => {
+  //   Api({
+  //     method: 'GET',
+  //     url: `${process.env.REACT_APP_API_ORIGIN}${ServerPath.getNews}`,
+  //     params: {
+  //       country: `${process.env.REACT_APP_API_COUNTRY}`,
+  //       apiKey: `${process.env.REACT_APP_API_KEY}`,
+  //     }
+  //   })
+  //     .then(({data}) => {
+  //       setData(data);
+  //     })
+  //     .catch(err => err);
+  // }
+  //
+  // return (
+  //   <div>
+  //     <div>
+  //       <button onClick={handleClick}>불러오기</button>
+  //     </div>
+  //     {data && <textarea rows="7" value={JSON.stringify(data, null, 2)} readOnly />}
+  //   </div>
+  // );
 }
 
 export default App;
