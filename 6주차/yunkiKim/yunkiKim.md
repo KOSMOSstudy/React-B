@@ -277,8 +277,113 @@ NewsList.propTypes = {
 ### 14.7 리액트 라우터 적용하기 
 
 이번에는 카테고리를 상태로 관리하는 것이 아닌 파라미터로 관리를 해보자.  
+src/index.js
+```jsx
+//...
+ReactDOM.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+//...
+```
+src/App.js. 
+여기서 path에 존재하는 ?는 선택적이라는 의미이다.
+```jsx
+import {Route} from 'react-router-dom';
+import NewsPage from "./pages/NewsPage";
 
+function App() {
+  return (
+    <Route path='/:category?' component={NewsPage}/>
+  )
+}
 
+export default App;
+
+```
+src/pages/NewsPage.js
+```jsx
+import {useParams} from "react-router-dom";
+
+import Categories from "../components/Categories";
+import NewsList from "../components/NewsList";
+
+const NewsPage = () => {
+  const {category} = useParams();
+
+  return (
+    <>
+      <Categories />
+      <NewsList category={category || 'all'}/>
+    </>
+  )
+}
+
+export default NewsPage;
+```
+src/components/Categories.js
+```jsx
+import styled from "styled-components";
+
+import categories from "../lib/categories";
+import {NavLink} from "react-router-dom";
+
+const CategoriesBlock = styled.div`
+  //...
+`;
+
+const Category = styled(NavLink)`
+  font-size: 1.125rem;
+  cursor: pointer;
+  white-space: pre;
+  text-decoration: none;
+  color: inherit;
+  padding-bottom: 0.25rem;
+  
+  &:hover {
+    color: #495057;
+  }
+  
+  & + & {
+    margin-left: 1rem;
+  }
+  
+ &.active {
+   font-weight: 600;
+   border-bottom: 2px solid #22b8cf;
+   color: #22b8cf;
+   &:hover {
+     color: #3bc9db;
+   }
+ } 
+`;
+
+const Categories = () => {
+  return (
+    <CategoriesBlock>
+      {categories.map(({name, text}) => (
+        <Category
+          key={name}
+          activeClassName="active"
+          //전체보기의 path가 /이므로 exact를 true로
+          //해야 한다. 적용하지 않으면 다른 카테고리 선택시에도
+          //전체링크가 선택된거 처럼 보인다.
+          exact={name === 'all'}
+          to={name === 'all' ? '/' : `/${name}`}
+        >
+          {text}
+        </Category>
+      ))}
+    </CategoriesBlock>
+  );
+};
+
+export default Categories;
+```
 ### 14.8 usePromise custom hook 만들기 
 
 내용 placeholder

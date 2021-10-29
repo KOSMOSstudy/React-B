@@ -1,7 +1,7 @@
-import styled, {css} from "styled-components";
-import PropTypes from 'prop-types';
+import styled from "styled-components";
 
 import categories from "../lib/categories";
+import {NavLink} from "react-router-dom";
 
 const CategoriesBlock = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ const CategoriesBlock = styled.div`
   }
 `;
 
-const Category = styled.div`
+const Category = styled(NavLink)`
   font-size: 1.125rem;
   cursor: pointer;
   white-space: pre;
@@ -30,35 +30,31 @@ const Category = styled.div`
     margin-left: 1rem;
   }
   
-  ${({active}) => active && css`
-    font-weight: 600;
-    border-bottom: 2px solid #22b8cf;
-    color: #22b8cf;
-    &:hover {
-      color: #3bc9db;
-    }
-  `}
+ &.active {
+   font-weight: 600;
+   border-bottom: 2px solid #22b8cf;
+   color: #22b8cf;
+   &:hover {
+     color: #3bc9db;
+   }
+ } 
 `;
 
-const Categories = ({handleSelect, category}) => {
+const Categories = () => {
   return (
     <CategoriesBlock>
       {categories.map(({name, text}) => (
         <Category
           key={name}
-          active={category === name}
-          onClick={() => handleSelect(name)}
+          activeClassName="active"
+          exact={name === 'all'}
+          to={name === 'all' ? '/' : `/${name}`}
         >
           {text}
         </Category>
       ))}
     </CategoriesBlock>
   );
-};
-
-Categories.propTypes = {
-  handleSelect: PropTypes.func.isRequired,
-  category: PropTypes.string.isRequired,
 };
 
 export default Categories;
