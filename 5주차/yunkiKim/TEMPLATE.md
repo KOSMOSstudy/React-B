@@ -12,13 +12,17 @@
 ### 13.2 프로젝트 준비 및 기본적인 사용법
 
 ### 13.3 Route 하나에 여러 개의 path 설정하기
+react-router-dom에서 Link 컴포넌트를 사용해 클라이언트의 path를 바꾼 후 새로고침을 하면 에러가 발생한다  \
 
 ### 13.4 URL 파라미터와 쿼리
+쿼리: useLocation().search로 접근(qs로 파싱 필요)  
+파라미터: useParams().paramName으로 접근 가능(paramName은 본인이 지정한 이름)  
 
 ### 13.5 서브 라우트
 
 ### 13.6 리액트 라우터 부가 기능
-
+Location, History객체는 props로 받을 필요 없기 useLocation, useHistory로 접근이 가능하다.  
+History 객체는 mutable이다
 ### 13.7 정리
 (3장 정리)[https://iskull-dev.tistory.com/152?category=947081]
 ## 14장
