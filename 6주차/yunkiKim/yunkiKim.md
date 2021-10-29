@@ -385,12 +385,81 @@ const Categories = () => {
 export default Categories;
 ```
 ### 14.8 usePromise custom hook 만들기 
+cutom hook을 사용해 프로젝트를 더 간결히 만들어 보자.  
+만들 훅은 usePrmise로 NewsList.js에서 api를 받아오는 부분이다.
+src/lib/usePromise.js
+```jsx
+import {useEffect, useState} from "react";
 
-내용 placeholder
+export default function usePromise(promiseCreator, deps) {
+  const [loading, setLoading] = useState(false);
+  const [resolved, setResolved] = useState(null);
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    const process = async () => {
+      setLoading(true);
+      try {
+        const resolved = await promiseCreator();
+        setResolved(resolved);
+      }
+      catch(err) {
+        setError(err);
+      }
+      setLoading(false);
+    }
+    process();
+  }, deps);
+
+  return [loading, resolved, error];
+}
+```
+src/components/NewsList.js
+```jsx
+//...
+const NewsList = ({category}) => {
+  const [loading, response, error] = usePromise(() => {
+    return Api({
+      method: 'GET',
+      url: `${process.env.REACT_APP_API_ORIGIN}${ServerPath.getNews}`,
+      params: {
+        country: `${process.env.REACT_APP_API_COUNTRY}`,
+        category: `${category === 'all' ? '' : category}`,
+        apiKey: `${process.env.REACT_APP_API_KEY}`,
+      }
+    })
+      .then(res => res)
+      .catch(err => err);
+  }, [category]);
+
+
+  if(loading) {
+    return <NewsListBlock>로딩 중...</NewsListBlock>
+  }
+
+  if(!response) {
+    return null;
+  }
+
+  if(error) {
+    return <NewsListBlock>에러 발생</NewsListBlock>
+  }
+
+  const {data: {articles}} = response;
+  return (
+    <NewsListBlock>
+      {articles && articles.map(articles => (
+        <NewsItem key={articles.url} article={articles} />
+      ))}
+    </NewsListBlock>
+  )
+}
+//...
+```
 ### 14.9 정리 
-
-내용 placeholder
+useEffect내부에서는 async로 함수 작성을 하지 말것.  
+커스텀 훅을 사용해 코드가 간결해 지긴 했으나 전역상태관리툴을 사용하면  
+상태관리가 더 쉬워진다.
 
 ## recoil 
 

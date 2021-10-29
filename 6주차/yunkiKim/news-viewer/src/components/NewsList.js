@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import PropTypes from 'prop-types';
-import {useEffect, useState} from "react";
 
 import {Api} from "../lib/custormAxios";
 import NewsItem from "./NewsItem";
 import {ServerPath} from "../lib/path";
+import usePromise from "../lib/usePromise";
 
 const NewsListBlock = styled.div`
   box-sizing: border-box;
@@ -20,13 +20,8 @@ const NewsListBlock = styled.div`
 `;
 
 const NewsList = ({category}) => {
-  const [articles, setArticles] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-
-    Api({
+  const [loading, response, error] = usePromise(() => {
+    return Api({
       method: 'GET',
       url: `${process.env.REACT_APP_API_ORIGIN}${ServerPath.getNews}`,
       params: {
@@ -35,18 +30,24 @@ const NewsList = ({category}) => {
         apiKey: `${process.env.REACT_APP_API_KEY}`,
       }
     })
-      .then(({data: {articles}}) => {
-        setArticles(articles);
-      })
+      .then(res => res)
       .catch(err => err);
-
-    setLoading(false);
   }, [category]);
+
 
   if(loading) {
     return <NewsListBlock>로딩 중...</NewsListBlock>
   }
 
+  if(!response) {
+    return null;
+  }
+
+  if(error) {
+    return <NewsListBlock>에러 발생</NewsListBlock>
+  }
+
+  const {data: {articles}} = response;
   return (
     <NewsListBlock>
       {articles && articles.map(articles => (
