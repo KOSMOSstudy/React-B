@@ -1,39 +1,19 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 
-import {Api} from "./lib/custormAxios";
-import {ServerPath} from "./lib/path";
-import NewsItem from "./components/NewsItem";
+import Categories from "./components/Categories";
 import NewsList from "./components/NewsList";
 
 function App() {
+  const [category, setCategory] = useState('all');
+
+  const handleSelect = useCallback(category => setCategory(category), []);
+
   return (
-    <NewsList></NewsList>
+    <>
+      <Categories category={category} handleSelect={handleSelect} />
+      <NewsList category={category} />
+    </>
   );
-  // const [data, setData] = useState(null);
-  //
-  // const handleClick = () => {
-  //   Api({
-  //     method: 'GET',
-  //     url: `${process.env.REACT_APP_API_ORIGIN}${ServerPath.getNews}`,
-  //     params: {
-  //       country: `${process.env.REACT_APP_API_COUNTRY}`,
-  //       apiKey: `${process.env.REACT_APP_API_KEY}`,
-  //     }
-  //   })
-  //     .then(({data}) => {
-  //       setData(data);
-  //     })
-  //     .catch(err => err);
-  // }
-  //
-  // return (
-  //   <div>
-  //     <div>
-  //       <button onClick={handleClick}>불러오기</button>
-  //     </div>
-  //     {data && <textarea rows="7" value={JSON.stringify(data, null, 2)} readOnly />}
-  //   </div>
-  // );
 }
 
 export default App;

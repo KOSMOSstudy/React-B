@@ -1,6 +1,10 @@
 import styled from "styled-components";
+import PropTypes from 'prop-types';
+import {useEffect, useState} from "react";
 
+import {Api} from "../lib/custormAxios";
 import NewsItem from "./NewsItem";
+import {ServerPath} from "../lib/path";
 
 const NewsListBlock = styled.div`
   box-sizing: border-box;
@@ -15,25 +19,45 @@ const NewsListBlock = styled.div`
   }
 `;
 
-const smapleArticle = {
-  title: '제목',
-  description: '내용',
-  url: 'https://google.com',
-  urlToImage: 'https://via.placeholder.com/160'
-};
+const NewsList = ({category}) => {
+  const [articles, setArticles] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-const NewsList = () => {
+  useEffect(() => {
+    setLoading(true);
+
+    Api({
+      method: 'GET',
+      url: `${process.env.REACT_APP_API_ORIGIN}${ServerPath.getNews}`,
+      params: {
+        country: `${process.env.REACT_APP_API_COUNTRY}`,
+        category: `${category === 'all' ? '' : category}`,
+        apiKey: `${process.env.REACT_APP_API_KEY}`,
+      }
+    })
+      .then(({data: {articles}}) => {
+        setArticles(articles);
+      })
+      .catch(err => err);
+
+    setLoading(false);
+  }, [category]);
+
+  if(loading) {
+    return <NewsListBlock>로딩 중...</NewsListBlock>
+  }
+
   return (
     <NewsListBlock>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
-      <NewsItem article={smapleArticle}/>
+      {articles && articles.map(articles => (
+        <NewsItem key={articles.url} article={articles} />
+      ))}
     </NewsListBlock>
   )
+}
+
+NewsList.propTypes = {
+  category: PropTypes.string.isRequired,
 }
 
 export default NewsList;
