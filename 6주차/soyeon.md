@@ -1,11 +1,31 @@
-# 5주차 React 스터디 정리
+# 6주차 React 스터디 정리
 
 | 장   | 제목                                 |
 | ---- | ------------------------------------ |
-| 14장 | 외부 API를 연동하여 뉴스 뷰어 만들기 |
-| 15-19대체 | Recoil         |
+| 14장 | 외부 API를 연동하여 뉴스 뷰어 만들기         |
+| 전역상태관리 | recoil |
 
 ## 14장
+
+### 14.5 데이터 연동하기 
+
+내용 placeholder
+
+### 14.6 카테고리 기능 구현하기 
+
+내용 placeholder
+
+### 14.7 리액트 라우터 적용하기 
+
+내용 placeholder
+
+### 14.8 usePromise custom hook 만들기 
+
+내용 placeholder
+
+### 14.9 정리 
+
+내용 placeholder
 
 ## Recoil
 
@@ -31,6 +51,8 @@ const fontSizeState = atom({
 ```
 
 Atoms는 디버깅, 지속성 및 모든 atoms의 map을 볼 수 있는 특정 고급 API에 사용되는 **고유한 키**가 필요하다!!! 두 개의 atom이 같은 키를 갖는 것은 오류이기 때문에 키 값은 전역적으로 **고유하도록** 해야한다!! React 컴포넌트 상태처럼 기본값(default)도 갖는다.
+
+#### useRecoilState
 
 컴포넌트에서 atom을 읽고 쓰려면 `useRecoilState` 라는 훅을 사용한다. React의 `useState` 와 비슷하지만 상태가 컴포넌트 간에 공유될 수 있다는 차이가 있다.
 
@@ -78,3 +100,59 @@ const fontSizeLabelState = selector({
 	},
 });
 ```
+`get`속성은 계산될 함수이다.
+이를 통해서 atoms와 다른 selectors에 접근할 수 있다.
+selectors에 접근하면 자동으로 종속관계가 생성되므로, 참조했던 다른 atoms나 selectors가 업데이트되면 이 함수도 다시 실행된다.
+
+이 `fontSizeLabelState`예시에서 selector는 `fontSizeState`라는 하나의 atom에 의존성을 갖는다.
+개념적으로 `fontSizeLabelState`selector는 `fontSizeState`를 입력으로 사용하고 형식화된 글꼴 크기 
+레이블을 출력으로 반환하는 순수 함수처럼 동작한다.
+
+#### useRecoilValue()
+
+Selectors는 `useRecoilValue`를 사용해 읽을 수 있다.
+이는 하나의 atom이나 selector를 인자로 받아 대응하는 값을 반환한다.
+`fontSizeLabelState`selector는 writable하지 않기 때문에 `useRecoilState()`를 사용하지 않는다.
+
+```jsx
+function FontButton() {
+  const [fontSize, setFontSize] = useRecoilState(fontSizeState);
+  const fontSizeLabel = useRecoilValue(fontSizeLabelState);
+
+  return (
+    <>
+      <div>Current font size: ${fontSizeLabel}</div>
+
+      <button onClick={setFontSize(fontSize + 1)} style={{fontSize}}>
+        Click to Enlarge
+      </button>
+    </>
+  );
+}
+```
+버튼을 클릭하면 버튼의 글씨 크기가 증가하는 동시에 현재 글씨 크기를 반영하도록 글씨 크기 레이블을
+업데이트 하는 두 가지 작업이 수행된다.
+
+#### useRecoilState() vs useRecoilValue()
+
+차이에 대해 자세히 알아보기 ~!!!!!! 
+
+### 설치
+
+`yarn add recoil`
+
+### Recoil 시작하기
+
+
+
+### 도입부
+
+내용 placeholder
+
+### Atoms
+
+내용 placeholder
+
+### Selectors 
+
+내용 placeholder
