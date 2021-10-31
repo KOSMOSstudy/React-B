@@ -466,7 +466,7 @@ useEffect내부에서는 async로 함수 작성을 하지 말것.
 객체가 있다고 하고 이 객체들을 각각 b1, b2, ..., bn이라 해자.  
 객체 bi(1 <= i <= n)들이 a의 상태 변화를 알기 위한 방식중 하나는 a에 접근해 상태 변화 유무를 확인하는 것이다. 이런 방식을  
 polling이라 한다. 하지만 이런 방식은 a의 상태 변화가 없을 때도 bn들이 a에 접근해 확인을 한다는 문제점이 존재 한다. 따라서  
-bi들이 a에 접근해 a의 상태변화 유무를 체크하는 것이 아닌 a가 상태 변화가 발생했을때 bn들에게 알리는 것이 observer pattern이다.  
+bi들이 a에 접근해 a의 상태변화 유무를 체크하는 것이 아닌 a가 상태 변화가 발생했을때 bi들에게 알리는 것이 observer pattern이다.  
 a의 상태가 변했을때 bn들에게 알리기 위해서는 a가 bn들의 리스트를 가지고 있어야 한다. a가 bi를 상태변화  
 알림에 추가하는 것을 구독이라 하고 a를 observable, bi를 observer라 한다. 
 ```ts
@@ -556,7 +556,7 @@ main();
 ### 주요 개념 
 data flow: atom(공유상태)->selectors(순수함수)->react component. 
 atom: 컴포넌트가 구독핳 수 있는 상태의 단위.  
-selectors: atoms 상태값을 동기, 비동기 방식을 통해 변환. 
+selectors: atoms 상태값을 동기, 비동기 방식을 통해 변환.   
 부수 효과: 함수가 함수 외부의 상태를 변경하거나 함수의 인자 값을 변경하는 것.  
 순수함수의 조건:  
   1. 동일한 인자를 주었을때 항상 같은 값을 반환하는 함수. 
@@ -683,7 +683,7 @@ src/components/TextInput.js
 ```jsx
 import {useRecoilState} from "recoil";
 
-import {textState} from "../sotre/textState";
+import {textState} from "../store/textState";
 
 const TextInput = () => {
   const [text, setText] = useRecoilState(textState);
@@ -709,7 +709,7 @@ export default TextInput;
 ```
 src/components/CharacterCount.js
 ```jsx
-import {charCountState} from "../sotre/textState";
+import {charCountState} from "../store/textState";
 import {useRecoilValue} from "recoil";
 
 const CharacterCount = () => {
@@ -753,12 +753,342 @@ export default CharacterCounter;
 
 ### Atoms
 
-내용 placeholder
+Atoms는 애플리케션 상태의 source of truth를 갖는다. todo list에서 source of truth는 todo 아이템을 나타내는 객체로  
+이루어진 배열이다.
+src/App.js
+```jsx
+import {RecoilRoot} from "recoil";
 
+import TodoList from "./pages/TodoList";
+
+function App() {
+  return (
+    <RecoilRoot>
+      <TodoList />
+    </RecoilRoot>
+  );
+}
+
+export default App;
+
+```
+src/pages/TodoList.js
+```jsx
+import {useRecoilValue} from "recoil";
+
+import {todoListState} from "../store/todoList";
+import TodoItemCreator from "../components/TodoItemCreator";
+import TodoItem from "../components/TodoItem";
+
+const TodoList = () => {
+  const todoList = useRecoilValue(todoListState);
+
+  return (
+    <>
+      <TodoItemCreator />
+
+      {todoList.map(todoItem => (
+        <TodoItem key={todoItem.id} item={todoItem} />
+      ))}
+    </>
+  )
+}
+
+export default TodoList;
+```
+src/components/TodoItemCreator.js
+```jsx
+import {useState} from 'react';
+import {useSetRecoilState} from "recoil";
+
+import {todoListState} from "../store/todoList";
+import {getTodoItem} from "../lib/todoItem";
+
+const TodoItemCreator = () => {
+  const [inputValue, setInputValue] = useState('');
+  const setTodoList = useSetRecoilState(todoListState);
+
+  const addItem = () => {
+    setTodoList((prevTodoList) => [
+      ...prevTodoList,
+      getTodoItem(inputValue),
+    ]);
+    setInputValue('');
+  };
+
+  const handleChange = ({target: {value}}) => {
+    setInputValue(value);
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+      />
+      <button onClick={addItem}>Add</button>
+    </div>
+  )
+}
+
+export default TodoItemCreator;
+```
+src/components/TodoItem.js
+```jsx
+import {useRecoilState} from "recoil";
+
+import {todoListState} from "../store/todoList";
+import {ModifyType, removeItemAtIndex, replaceItemAtIndex} from "../lib/todoItem";
+
+const TodoItem = ({item}) => {
+  const [todoList, setTodoList] = useRecoilState(todoListState);
+  const index = todoList.findIndex((listItem) => listItem === item);
+
+  const handleChange = ({target: {value, name}}) => {
+    let newList;
+    switch (name) {
+      case ModifyType.editList:
+        newList = replaceItemAtIndex(todoList, index, {
+          ...item,
+          text: value,
+        });
+        break;
+      case ModifyType.checkDone:
+        newList = replaceItemAtIndex(todoList, index, {
+          ...item,
+          isComplete: !item.isComplete,
+        });
+        break;
+      default:
+        throw new Error('invalid ModifyType');
+    }
+
+    setTodoList(newList);
+  }
+
+  const handleClick = () => {
+    const newList = removeItemAtIndex(todoList, index);
+
+    setTodoList(newList);
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        name={ModifyType.editList}
+        value={item.text}
+        onChange={handleChange}
+      />
+      <input
+        type="checkbox"
+        name={ModifyType.checkDone}
+        checked={item.isComplete}
+        onChange={handleChange}
+      />
+      <button onClick={handleClick}>X</button>
+    </div>
+  )
+
+}
+
+export default TodoItem;
+```
+src/lib/todoItem.js
+```jsx
+function getId() {
+  let id = 0;
+  return () => id++;
+}
+
+const id = getId();
+
+export const getTodoItem = (inputValue) => ({
+  id: id(),
+  text: inputValue,
+  isComplete: false,
+});
+
+export const replaceItemAtIndex = (arr, index, newValue) => {
+  return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
+}
+
+export const removeItemAtIndex = (arr, index) => {
+  return [...arr.slice(0, index), ...arr.slice(index + 1)];
+}
+
+export const ModifyType = {
+  editList: 'edit',
+  checkDone: 'done',
+};
+Object.freeze(ModifyType);
+```
 ### Selectors 
+Selector는 파생된 상태의 일부를 나타낸다. 파생된 상태는 다른 데이터에 의존하는 동적인 데이터를 만들 수 있다.  
+현재 만들고 있는 todo리스트에서는 특정 조건에 의해 필터링된 리스트, 리스트의 통계가 파생된 데이터이다.  
+컴포넌트의 관점에서 selector들은 atom들을 읽어들이는데 사용된 것과 같은 훅들로 읽을 수 있다. 하지만, 일부 훅들은  
+오직 쓰기 상태(useRecoilState())에서만 동작한다는 것을 알아야 한다. 모든 atom들은 쓰기 상태이지만 오직 get과  
+set 프로퍼티가 있는 selector만이 쓰기상태이다.  
+filter:  
+src/store/todoList.js
+```jsx
+//...
+export const todoListFilterState = atom({
+  key: 'todoListTodoListFilterState',
+  default: `${FilterItemType.all}`,
+});
 
-내용 placeholder
+export const filteredTodoListState = selector({
+  key: 'todoListFilteredTodoListState',
+  get: (({get}) => {
+    const filter = get(todoListFilterState);
+    const list = get(todoListState);
 
+    switch (filter) {
+      case `${FilterItemType.completed}`:
+        return list.filter((item) => item.isComplete);
+      case `${FilterItemType.uncompleted}`:
+        return list.filter((item) => !item.isComplete);
+      case `${FilterItemType.all}`:
+        return list;
+      default:
+        return new Error('invalid FilterItemType');
+    }
+  })
+});
+```
+src/components/TodoListFilter.js
+```jsx
+import {useRecoilState} from "recoil";
+import {todoListFilterState} from "../store/todoList";
+import {FilterItemType} from "../lib/todoItem";
+
+const TodoListFilters = () => {
+  const [filter, setFilter] = useRecoilState(todoListFilterState);
+
+  const handleChange = ({target: {value}}) => {
+    setFilter(value);
+  }
+
+  return (
+    <>
+      Filter:
+      <select value={filter} onChange={handleChange}>
+        <option value={FilterItemType.all}>All</option>
+        <option value={FilterItemType.completed}>Completed</option>
+        <option value={FilterItemType.uncompleted}>UnCompleted</option>
+      </select>
+    </>
+  )
+}
+
+export default TodoListFilters;
+```
+src/pages/TodoList.js
+```jsx
+//...
+const TodoList = () => {
+  const todoList = useRecoilValue(filteredTodoListState);
+
+  return (
+    <>
+      <TodoItemCreator />
+      <TodoListFilter />
+      {/*...*/}
+    </>
+  )
+}
+
+export default TodoList;
+```
+src/lib/todoItem.js
+```js
+//...
+export const FilterItemType = {
+  all: 'Show All',
+  completed: 'Show Completed',
+  uncompleted: 'Show uncompleted'
+}
+```
+list item state
+src/store/todoList.js
+```jsx
+//...
+export const todoListStatsState = selector({
+  key: 'todoListTodoListStatsState',
+  get: ({get}) => {
+    const todoList = get(todoListState);
+    const totalNum = todoList.length;
+    const totalCompletedNum = todoList.filter((item) => item.isComplete).length;
+    const totalUncompletedNum = totalNum - totalCompletedNum;
+    const percentCompleted = totalNum === 0 ? 0 : totalCompletedNum / totalNum;
+
+    return {
+      totalNum,
+      totalCompletedNum,
+      totalUncompletedNum,
+      percentCompleted,
+    };
+  },
+})
+```
+src/components/TodoLIstStats.js
+```jsx
+import {useRecoilValue} from "recoil";
+
+import {todoListStatsState} from "../store/todoList";
+
+const TodoListStats = () => {
+  const {
+    totalNum,
+    totalCompletedNum,
+    totalUncompletedNum,
+    percentCompleted,
+  } = useRecoilValue(todoListStatsState);
+
+  const formattedPercentCompleted = Math.round(percentCompleted * 100);
+
+  return (
+    <ul>
+      <li>Total items: {totalNum}</li>
+      <li>Items completed: {totalCompletedNum}</li>
+      <li>Items not completed: {totalUncompletedNum}</li>
+      <li>Percent completed: {formattedPercentCompleted}</li>
+    </ul>
+  );
+}
+
+export default TodoListStats;
+```
+src/pages/TodoList.js
+```jsx
+import {useRecoilValue} from "recoil";
+
+import {filteredTodoListState} from "../store/todoList";
+import TodoItemCreator from "../components/TodoItemCreator";
+import TodoItem from "../components/TodoItem";
+import TodoListFilter from "../components/TodoListFilter";
+import TodoListStats from "../components/TodoListStats";
+
+const TodoList = () => {
+  const todoList = useRecoilValue(filteredTodoListState);
+
+  return (
+    <>
+      <TodoItemCreator />
+      <TodoListFilter />
+      <TodoListStats />
+
+      {todoList.map(todoItem => (
+        <TodoItem key={todoItem.id} item={todoItem} />
+      ))}
+    </>
+  )
+}
+
+export default TodoList;
+```
 ---
 
 질문, 이해가 안 갔던 것, 궁금한 것, 스터디장이나 다른 사람들에게 물어보고 싶은 것, 기타 등등이 있으시면 써주시고, 이 문구는 지워주세요!
