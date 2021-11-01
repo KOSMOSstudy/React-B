@@ -416,27 +416,368 @@ usePromise를 사용하면 useEffect 설정을 직접 하지 않아도 되어 �
 
 ### 주요 개념
 
-내용 placeholder
+> 💡 Recoil을 사용하면 atoms(공유 상태)에서 selectors(순수 함수)를 거쳐 React 컴포넌트로 내려가는 data-flow 그래프를 만들 수 있다.
+
+> 💡 **Atoms** : 컴포넌트가 구독할 수 있는 상태의 단위다.
+
+업데이트가 되면 각각의 구독된 컴포넌트는 새로운 값을 반영하여 다시 렌더링된다.  
+atoms는 런타임에서 생성될 수도 있으며 React의 로컬컴포넌트 상태 대신 사용할 수 있다.  
+동일한 atom이 여러 컴포넌트에서 사용되는 경우 모든 컴포넌트는 상태를 공유한다.
+
+Atoms는 `atom` 함수를 사용하여 생성한다.  
+디버깅, 지속성 및 모든 atoms의 map을 볼 수 있는 특정 고급 API에 사용되는 고유한 키가 필요하나,  
+2개의 키를 갖는 것은 오류이기 때문에 키 값은 전역적으로 고유하도록 해야한다.
+
+컴포넌트에서 atom을 읽고 쓰기 위해서는 `useRecoilState`라는 훅을 사용한다.
+
+> 💡 **Selectors** : atoms나 다른 selectors를 입력으로 받아들이는 순수 함수(pure function)다.
+
+상위의 atoms나 selectors가 업데이트되면 하위의 selector 함수도 다시 실행된다.  
+컴포넌트는 atoms처럼 selectors를 구독할 수 있으며 변경되면 컴포넌트들도 다시 렌더링된다.
+
+주로 상태를 기반으로 하는 파생 데이터를 계산하는 데 사용된다.  
+어떤 컴포넌트가 자신을 필요로하는지, 자신은 어떤 상태에 의존하는지를 추적하기 때문에 이러한 함수적 접근방식을 매우 효율적으로 만든다.
+
+Selector는 `selector` 함수를 사용하여 정의한다.  
+selector를 읽기 위해서는 `useRecoilValue()`를 사용한다.  
+useRecoilValue는 하나의 atom이나 selector를 인자로 받아서 대응하는 값을 반환한다.
+
+=> 컴포넌트의 관점에서 보면 selectors와 atoms는 동일한 인터페이스를 가지므로 서로 대체할 수 있다.
+
+<br />
 
 ### 설치
 
-내용 placeholder
+<라이브러리 설치>
+
+> yarn add recoil 명령어 사용
+
+Recoil은 Webpack이나 Rollup과 같은 모듈 번들러와도 문제없이 호환된다.  
+빌드는 ES5로 트랜스파일되지 않고 같이 사용하는 것은 지원하지 않는다.  
+Recoil은 ES6의 Map과 Set타입에 의존하는데, polyfills를 통해 에뮬레이션하는 것은 성능상의 문제를 야기할 수 있다.
+
+버전 0.0.11 이후 Recoil은 script태그에 직접 사용될 수 있는 UMD 빌드를 제공한다.  
+그리고 Recoil 심볼을 글로벌 네임스페이스에 노출시킨다.  
+최신 버전으로부터 손상이 일어날 수 있기 때문에 안정된 특정 버전 번호 및 빌드에 연결시키는 것이 좋다.
+
+> **ESLint** : useRecoilCallback()을 사용하기 위해 전달된 종속성이 잘못 지정되었을 때 경고를 표시하고 해결방안을 제시한다.
+
+`eslint-plugin-react-hooks`를 사용할 때, eslint 설정을 사용하는 경우 useRecoilCallback을 additionalHooks 목록에 추가하는 것이 좋다.  
+이때 additionalHooks의 형식은 정규식 문자열이다.
+
+< Nightly Builds >  
+아래 명령어를 통해 nightly 브랜치를 이용할 수 있다.
+
+> yarn add https://github.com/facebookexperimental/Recoil.git#nightly
+
+<br />
 
 ### Recoil 시작하기
 
-내용 placeholder
+> 💡 **Recoil** : 리액트를 위한 상태 관리 라이브러리
+
+루트 컴포넌트가 RecoilRoot를 넣기에 가장 좋은 장소.
+
+**Atom**  
+Atoms는 어떤 컴포넌트에서나 읽고 쓸 수 있다.  
+atom의 값을 읽는 컴포넌트들은 암묵적으로 atom을 구독한다.  
+그래서 변화가 있을 때 atom을 구독하는 모든 컴포넌트들은 재렌더링된다.
+
+**Selector**  
+Selector은 파생된 상태의 일부를 나타낸다.  
+파생된 상태는 상태의 변화이며, 어떤 방법으로든 주어진 상태를 수정하는 순수 함수에 전달된 상태의 결과물로 생각할 수 있다.
+
+<br />
 
 ### 도입부
 
-내용 placeholder
+TodoList 예제를 만들어보면서 Atoms와 Selector 개념을 이용해볼 것이다.
 
 ### Atoms
 
-내용 placeholder
+Atoms는 어플리케이션 상태의 source of truth를 갖는다.  
+todoList에서 source of truth는 todo 아이템을 나타내는 객체로 이루어진 배열이 될 것이다.
+
+Atom 리스트를 todoListState라고 선언하고 atom()를 이용해서 생성하게 되면,
+
+```javascript
+const todoListState = atom({
+    key: "todoListState",
+    default: [],
+});
+```
+
+고유한 key를 주고 비어있는 배열 값을 default로 설정한다.  
+Atom을 읽기 위해서 `useRecoilValue()`사용할 것이며, 이를 TodoList 컴포넌트를 따로 만들어 사용할 것이다.
+
+새로운 todo 아이템을 만들기 위해서 선언했던 todoListState 내용을 업데이트하는 setter 함수에 접근해야 한다.  
+setter함수를 얻기 위해 `useSetRecoilState()` 훅을 사용할 수 있다.
+
+```javascript
+//TodoItemCreator.js
+import React, { useState } from "react";
+import { useSetRecoilState } from "recoil";
+
+import { todoListState } from "TodoList";
+
+function TodoItemCreator() {
+    const [inputValue, setInputValue] = useState("");
+    const setTodoList = useSetRecoilState(todoListState);
+
+    const addItem = () => {
+        setTodoList((oldTodoList) => [
+            ...oldTodoList,
+            {
+                id: getId(),
+                text: inputValue,
+                isComplete: false,
+            },
+        ]);
+        setInputValue("");
+    };
+
+    const onChange = ({ target: { value } }) => {
+        setInputValue(value);
+    };
+
+    return (
+        <div>
+            <input type="text" value={inputValue} onChange={onChange} />
+            <button onClick={addItem}>Add</button>
+        </div>
+    );
+}
+
+// 고유한 Id 생성을 위한 유틸리티
+let id = 0;
+function getId() {
+    return id++;
+}
+
+export default TodoItemCreator;
+```
+
+TodoItemCreator.js를 만들면서 유의해야 할 점은 기존 리스트를 기반으로 새 todo 리스트를 만들 수 있도록 setter 함수의 updater 형식을 사용한다는 점에 유의해야 한다.
+
+그 다음 todo 리스트의 값을 표시하는 동시에 텍스트를 변경하고 항목을 삭제하는 TodoItem 컴포넌트를 만들 것이다.
+
+```javascript
+//TodoItem.js
+import React from "react";
+import { useRecoilState } from "recoil";
+
+import { todoListState } from "TodoList";
+
+function TodoItem({ item }) {
+    const [todoList, setTodoList] = useRecoilState(todoListState);
+    const index = todoList.findIndex((listItem) => listItem === item);
+
+    const editItemText = ({ target: { value } }) => {
+        const newList = replaceItemAtIndex(todoList, index, {
+            ...item,
+            text: value,
+        });
+
+        setTodoList(newList);
+    };
+
+    const toggleItemCompletion = () => {
+        const newList = replaceItemAtIndex(todoList, index, {
+            ...item,
+            isComplete: !item.isComplete,
+        });
+
+        setTodoList(newList);
+    };
+
+    const deleteItem = () => {
+        const newList = removeItemAtIndex(todoList, index);
+
+        setTodoList(newList);
+    };
+
+    return (
+        <div>
+            <input type="text" value={item.text} onChange={editItemText} />
+            <input
+                type="checkbox"
+                checked={item.isComplete}
+                onChange={toggleItemCompletion}
+            />
+            <button onClick={deleteItem}>X</button>
+        </div>
+    );
+}
+
+function replaceItemAtIndex(arr, index, newValue) {
+    return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
+}
+
+function removeItemAtIndex(arr, index) {
+    return [...arr.slice(0, index), ...arr.slice(index + 1)];
+}
+
+export default TodoItem;
+```
+
+<br />
 
 ### Selectors
 
-내용 placeholder
+Selector는 파생된 상태의 일부이다.  
+파생된 상태는 다른 데이터에 의존하는 동적인 데이터를 만들 수 있기 때문에 강력한 개념이라고 할 수 있다.
+
+이 recoil 예제에서는 다음 것들이 파생된 상태로 간주된다.
+
+-   **필터링 된 todo 리스트** : 전체 todo 리스트에서 일부 기준에 따라 특정 항목이 필터링 된 새 리스트
+
+-   **Todo 리스트 통계** : 전체 todo 리스트에서 목록의 총 항목 수, 완료된 항목 수, 완료된 항목의 백분율 같은 리스트의 유요한 속성들을 계산하여 파생
+
+필터링 된 todo리스트를 구현하기 위해서 atom에 저장되는 필터 기준을 정해야 한다.
+
+<필터 옵션>
+
+1. Show All (기본값)
+2. Show Completed
+3. Show Uncompleted
+
+```javascript
+import React, { atom, selector } from "react";
+import { useRecoilState } from "recoil";
+import { todoListState } from "TodoList";
+
+const todoListFilterState = atom({
+    key: "todoListFilterState",
+    default: "Show All",
+});
+
+const filteredTodoListState = selector({
+    key: "filteredTodoListState",
+    get: ({ get }) => {
+        const filter = get(todoListFilterState);
+        const list = get(todoListState);
+
+        switch (filter) {
+            case "Show Completed":
+                return list.filter((item) => item.isComplete);
+            case "Show Uncompleted":
+                return list.filter((item) => !item.isComplete);
+            default:
+                return list;
+        }
+    },
+});
+
+function TodoListFilter() {
+    const [filter, setFilter] = useRecoilState(todoListFilterState);
+
+    const updateFilter = ({ target: { value } }) => {
+        setFilter(value);
+    };
+
+    return (
+        <>
+            Filter:
+            <select value={filter} onChange={updateFilter}>
+                <option value="Show All">All</option>
+                <option value="Show Completed">Completed</option>
+                <option value="Show Uncompleted">Uncompleted</option>
+            </select>
+        </>
+    );
+}
+
+export default TodoListFilter;
+```
+
+filteredTodoListState는 내부적으로 2개의 의존성 todoListFilterState, todoListState을 추적한다.  
+그래서 2가지 중 하나라도 변하면 filteredTodoListState는 재실행된다.
+
+컴포넌트 관점으로 보면 selector는 atom을 읽을 때 사용하는 같은 훅을 사용해 읽을 수 있다.  
+특정한 훅은 `쓰기 가능 상태 (useRecoilState())` 에서만 작동한다.  
+모든 atom은 쓰기 가능 상태이지만 selector는 일부만 쓰기 가능한 상태로 간주된다.
+
+그리고 이 예제에서 사용할 4가지의 통계가 있는데,
+
+1. todo 항목의 총 개수
+2. 완료된 todo 항목들의 총 개수
+3. 완료되지 않은 todo 항목들의 총 개수
+4. 완료된 항목의 백분율
+
+필요한 데이터를 포함하는 객체를 반환하는 selector가 든 컴포넌트를 만들 것이다.
+
+```javascript
+//TodoListStats.js
+import React, { selector } from "react";
+import { useRecoilValue } from "recoil";
+import { todoListState } from "TodoList";
+
+const todoListStatsState = selector({
+    key: "todoListStatsState",
+    get: ({ get }) => {
+        const todoList = get(todoListState);
+        const totalNum = todoList.length;
+        const totalCompletedNum = todoList.filter(
+            (item) => item.isComplete
+        ).length;
+        const totalUncompletedNum = totalNum - totalCompletedNum;
+        const percentCompleted =
+            totalNum === 0 ? 0 : totalCompletedNum / totalNum;
+
+        return {
+            totalNum,
+            totalCompletedNum,
+            totalUncompletedNum,
+            percentCompleted,
+        };
+    },
+});
+
+function TodoListStats() {
+    const {
+        totalNum,
+        totalCompletedNum,
+        totalUncompletedNum,
+        percentCompleted,
+    } = useRecoilValue(todoListStatsState);
+
+    const formattedPercentCompleted = Math.round(percentCompleted * 100);
+
+    return (
+        <ul>
+            <li>Total items: {totalNum}</li>
+            <li>Items completed: {totalCompletedNum}</li>
+            <li>Items not completed: {totalUncompletedNum}</li>
+            <li>Percent completed: {formattedPercentCompleted}</li>
+        </ul>
+    );
+}
+
+export default TodoListStats;
+```
+
+마무리로 TodoList.js를 수정해준다.
+
+```javascript
+//TodoList.js
+function TodoList() {
+    const todoList = useRecoilValue(filteredTodoListState);
+
+    return (
+        <>
+            <TodoListStats />
+            <TodoListFilter />
+            <TodoItemCreator />
+
+            {todoList.map((todoItem) => (
+                <TodoItem key={todoItem.id} item={todoItem} />
+            ))}
+        </>
+    );
+}
+
+export default TodoList;
+```
 
 ---
 
