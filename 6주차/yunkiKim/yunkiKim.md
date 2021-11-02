@@ -666,12 +666,12 @@ src/store/textState.js
 import {atom, selector} from "recoil";
 
 export const textState = atom({
-  key: 'textState-textState',
+  key: 'textStateTextState',
   default: '',
 });
 
 export const charCountState = selector({
-  key: 'textState-charCountState',
+  key: 'textStateCharCountState',
   get: ({get}) => {
     const text = get(textState);
 
