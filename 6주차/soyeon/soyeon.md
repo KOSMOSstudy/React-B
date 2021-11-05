@@ -9,23 +9,98 @@
 
 ### 14.5 데이터 연동하기 
 
-내용 placeholder
+#### API 호출
+
+useEffect를 사용해 컴포넌트가 처음 렌더링되는 시점에 API를 요청한다.
+
+**!주의!**
+useEffect에 등록하는 함수에 async를 붙이면 안된다!!!
+
+왜냐하면 useEffect에서 반환해야 하는 값은 뒷정리 함수이기 때문이다.
+따라서 useEffect 내부에서 async/await을 사용하고 싶다면, 함수 내부에 
+async 키워드가 붙은 또다른 함수를 만들어서 사용해 주어야 한다.
+
+*/components/NewsList.js 참고*
+
+데이터를 불러와서 뉴스 데이터 배열을 map 함수를 사용해 컴포넌트 배열로 변환할 때 
+신경써야 하는 부분이 있다!
+
+→ **map** 함수를 사용하기 전에 꼭 **!articles**를 조회하여 해당 값이 현재 null이 아닌지 검사해야 한다!!! 
+
+만약 이 작업을 하지 않으면 아직 데이터가 없을 때 null에는 map 함수가 없기 때문에 렌더링 과정에서 오류가 발생한다.
 
 ### 14.6 카테고리 기능 구현하기 
 
-내용 placeholder
+*components/Categories.js 참고*
+
+해당 컴포넌트에서는 categories라는 배열 안에 name과 text 값이 들어가 있는 객체들을 넣어 
+주어서 한글로 된 카테고리와 실제 카테고리 값을 연결시켜 주었다.
+- name : 실제 카테고리 값
+- text : 렌데링할 때 사용할 한글 카테고리
+
+#### API를 호출할 때 카테고리 지정하기 
+
+*/components/NewsList.js 참고*
+
+현재 category 값이 무엇인지에 따라 요청할 주소가 동적으로 바뀌고 있다.
+category값이 all 이라면 query 값을 공백으로 설정하고, all이 아니라면 **"&category=카테고리"**
+형태의 문자열을 만들도록 했다. 그리고 이 query를 요청할 때 주소에 포함시켜 주었다.
+
+category 값이 바뀔 때마다 뉴스를 새로 불러오기 때문에 useEffect의 의존 배열에 category를 넣어주어야 한다!! 
+
+> 의존 배열 : 두 번째 파라미터로 설정하는 배열
 
 ### 14.7 리액트 라우터 적용하기 
 
-내용 placeholder
+`yarn add react-router-dom`
+
+> index.js에 <BrowserRouter> 적용
+
+*/components/NewsPages.js 참고*
+
+선택된 category 값을 URL 파라미터를 통해 사용할 것이므로 Categories 컴포넌트에서 
+현재 선택된 카테고리 값을 알려 줄 필요도 없고 onSelect 함수를 따로 전달해 줄 필요도 없다.
+
+#### App 컴포넌트에서 Route 정의
+
+```jsx
+import React from 'react';
+import NewsPage from './pages/NewsPage';
+import { Route } from 'react-router-dom';
+
+const App = () => {
+  return <Route path="/:category?" component={NewsPage} />;
+};
+
+export default App;
+```
+위 코드에서 사용된 path에 /:category?와 같은 형태로 맨 뒤에 물음표 문자가 들어가 있다.
+이는 category 값이 **선택적**이라는 의미이다! 있을 수도 있고 없을 수도 있고!
+category URL 파라미터가 없다면 전체 카테고리를 선택한 것으로 간주한다.
+
+#### Categories에서 NavLink 사용하기
+
+*/components/categories.js 참고*
+
+NavLink로 만들어진 Category 컴포넌트에 to 값은 "/카테고리이름"으로 설정해 주었다.
+카테고리 중 '전체보기'의 경우는 예외적으로 "/all"대신 **"/"**로 설정하였다.
+to 값이 "/"를 가리키고 있을 때는 **exact 값을 true**로 해주어야 한다!!!
 
 ### 14.8 usePromise custom hook 만들기 
 
-내용 placeholder
+*/lib/usePromise.js 참고*
+
+이 훅은 Promise의 대기 중, 완료 결과, 실패 결과에 대한 상태를 관리하며, usePromise의 
+의존 배열 deps를 파라미터로 받아온다. 파라미터로 받아 온 deps 배열은 usePromise 내부에서
+사용한 useEffect의 의존 배열로 설정된다.
 
 ### 14.9 정리 
 
-내용 placeholder
+14장에서는 외부 API를 연동해 사용하는 방법을 알아보았다.
+
+리액트 컴포넌트에서 API를 연동하여 개발할 때의 **유의사항**
+- useEffect에 등록하는 함수는 async로 작성하면 안된다!!! 
+- 대신에 함수 내부에 async 함수를 따로 만들어 주어야 한다.
 
 ## Recoil
 
