@@ -23,4 +23,6 @@
 -   [1주차 스터디](./발표/1주차.md)
 -   [2주차 스터디](./발표/2주차.md)
 -   [3주차 스터디](./발표/3주차.md)
+-   [4주차 스터디](./발표/4주차.md)
 -   [5주차 스터디](./발표/5주차.md)
+-   [6주차 스터디](https://github.com/KOSMOSstudy/React-B/blob/main/6%EC%A3%BC%EC%B0%A8/yunkiKim/yunkiKim.md)
